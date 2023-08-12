@@ -1,0 +1,91 @@
+# Welcome to Grafbase!
+# Define your data models, integrate auth, permission rules, custom resolvers, search, and more with Grafbase.
+
+# Integrate Auth
+# https://grafbase.com/docs/auth
+#
+# schema @auth(providers: [{ type: oidc, issuer: "{{ env.ISSUER_URL }}" }], rules: [{ allow: private }]) {
+#   query: Query
+# }
+
+# Start your backend
+# https://grafbase.com/docs/cli
+# npx grafbase dev
+
+
+type User @model @search{
+  id:ID!
+  username:String!
+  email:String! @unique
+  profileImage: String! 
+  participants: [Participant]
+  leaderboard: [Leaderboard]  
+  message: [Message]
+}
+
+type Contest @model  @search{
+  id: ID!
+  name: String!
+  description: String!
+  status: String!
+  maxParticipants: Int!
+  participants: [Participant]
+  leaderboard: [Leaderboard]   
+  contestDate: DateTime
+  contestStock: [ContestStock]
+  contestStockFeed: [ContestStockFeed]
+  message: [Message]
+}
+
+type Participant @model  @search{
+  id: ID!
+  user: User!
+  userId:String!
+  contest: Contest!
+  contestId:String!
+  balanceAmount: Float!
+  stockCode: String!
+  stockUnitBuyPrice: Float!
+  betType: String!
+  stockUnits: Float!
+}
+
+type ContestStock @model  @search{
+  id: ID!
+  stockCode: String!
+  stockDescription: String!
+  stockImage: String!
+  stockPrice: Float!
+  contest: Contest!
+  contestId:String!
+}
+
+
+type Leaderboard @model  @search{
+  id:ID!
+  rank: Int!
+  amount: Float!
+  user: User!
+  userId:String!
+  contest: Contest! 
+  contestId:String!
+}
+
+type Message @model @search{
+  id:ID!
+  body: String!
+  user: User!
+  userId:String!
+  contest: Contest!
+  contestId:String!
+  msgDateTime: DateTime!
+} 
+
+type ContestStockFeed @model  @search{
+  id: ID!
+  stockFeed: String!
+  contest: Contest!
+  contestId: String!
+}
+
+

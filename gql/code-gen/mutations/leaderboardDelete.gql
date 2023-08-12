@@ -1,0 +1,5 @@
+mutation leaderboardDelete($by: LeaderboardByInput!){
+    leaderboardDelete(by: $by){
+        deletedId
+    }
+}

@@ -1,0 +1,58 @@
+query userSearch($after: String, $before: String, $first: Int, $last: Int, $orderBy: UserOrderByInput, $after1: String, $before1: String, $first1: Int, $last1: Int, $orderBy1: UserOrderByInput, $after2: String, $before2: String, $first2: Int, $last2: Int, $orderBy2: UserOrderByInput, $query: String, $fields: [String!], $filter: UserSearchFilterInput, $first3: Int, $after3: String, $last3: Int, $before3: String){
+    userSearch(query: $query, fields: $fields, filter: $filter, first: $first3, after: $after3, last: $last3, before: $before3){
+        pageInfo{
+            hasPreviousPage
+            hasNextPage
+            startCursor
+            endCursor
+        }
+        searchInfo{
+            totalHits
+        }
+        edges{
+            node{
+                username
+                email
+                profileImage
+                participants(after: $after, before: $before, first: $first, last: $last, orderBy: $orderBy){
+                    pageInfo{
+                        hasPreviousPage
+                        hasNextPage
+                        startCursor
+                        endCursor
+                    }
+                    edges{
+                        cursor
+                    }
+                }
+                leaderboard(after: $after1, before: $before1, first: $first1, last: $last1, orderBy: $orderBy1){
+                    pageInfo{
+                        hasPreviousPage
+                        hasNextPage
+                        startCursor
+                        endCursor
+                    }
+                    edges{
+                        cursor
+                    }
+                }
+                message(after: $after2, before: $before2, first: $first2, last: $last2, orderBy: $orderBy2){
+                    pageInfo{
+                        hasPreviousPage
+                        hasNextPage
+                        startCursor
+                        endCursor
+                    }
+                    edges{
+                        cursor
+                    }
+                }
+                id
+                updatedAt
+                createdAt
+            }
+            cursor
+            score
+        }
+    }
+}

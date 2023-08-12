@@ -1,0 +1,97 @@
+mutation userCreate($after: String, $before: String, $first: Int, $last: Int, $orderBy: UserOrderByInput, $after1: String, $before1: String, $first1: Int, $last1: Int, $orderBy1: UserOrderByInput, $after2: String, $before2: String, $first2: Int, $last2: Int, $orderBy2: ContestOrderByInput, $after3: String, $before3: String, $first3: Int, $last3: Int, $orderBy3: ContestOrderByInput, $after4: String, $before4: String, $first4: Int, $last4: Int, $orderBy4: UserOrderByInput, $input: UserCreateInput!){
+    userCreate(input: $input){
+        user{
+            username
+            email
+            profileImage
+            participants(after: $after4, before: $before4, first: $first4, last: $last4, orderBy: $orderBy4){
+                pageInfo{
+                    hasPreviousPage
+                    hasNextPage
+                    startCursor
+                    endCursor
+                }
+                edges{
+                    node{
+                        user{
+                            username
+                            email
+                            profileImage
+                            leaderboard(after: $after, before: $before, first: $first, last: $last, orderBy: $orderBy){
+                                pageInfo{
+                                    hasPreviousPage
+                                    hasNextPage
+                                    startCursor
+                                    endCursor
+                                }
+                                edges{
+                                    cursor
+                                }
+                            }
+                            message(after: $after1, before: $before1, first: $first1, last: $last1, orderBy: $orderBy1){
+                                pageInfo{
+                                    hasPreviousPage
+                                    hasNextPage
+                                    startCursor
+                                    endCursor
+                                }
+                                edges{
+                                    cursor
+                                }
+                            }
+                            id
+                            updatedAt
+                            createdAt
+                        }
+                        userId
+                        contest{
+                            name
+                            description
+                            status
+                            maxParticipants
+                            contestDate
+                            contestStock(after: $after2, before: $before2, first: $first2, last: $last2, orderBy: $orderBy2){
+                                pageInfo{
+                                    hasPreviousPage
+                                    hasNextPage
+                                    startCursor
+                                    endCursor
+                                }
+                                edges{
+                                    cursor
+                                }
+                            }
+                            contestStockFeed(after: $after3, before: $before3, first: $first3, last: $last3, orderBy: $orderBy3){
+                                pageInfo{
+                                    hasPreviousPage
+                                    hasNextPage
+                                    startCursor
+                                    endCursor
+                                }
+                                edges{
+                                    cursor
+                                }
+                            }
+                            id
+                            updatedAt
+                            createdAt
+                        }
+                        contestId
+                        balanceAmount
+                        stockCode
+                        stockUnitBuyPrice
+                        betType
+                        stockUnits
+                        id
+                        updatedAt
+                        createdAt
+                    }
+                    cursor
+                }
+            }
+            id
+            updatedAt
+            createdAt
+        }
+    }
+}

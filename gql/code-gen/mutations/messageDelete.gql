@@ -1,0 +1,5 @@
+mutation messageDelete($by: MessageByInput!){
+    messageDelete(by: $by){
+        deletedId
+    }
+}

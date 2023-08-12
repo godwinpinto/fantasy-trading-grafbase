@@ -1,0 +1,24 @@
+const fs = require('fs');
+const path = require('path');
+
+module.exports.user = fs.readFileSync(path.join(__dirname, 'user.gql'), 'utf8');
+module.exports.userCollection = fs.readFileSync(path.join(__dirname, 'userCollection.gql'), 'utf8');
+module.exports.contest = fs.readFileSync(path.join(__dirname, 'contest.gql'), 'utf8');
+module.exports.contestCollection = fs.readFileSync(path.join(__dirname, 'contestCollection.gql'), 'utf8');
+module.exports.participant = fs.readFileSync(path.join(__dirname, 'participant.gql'), 'utf8');
+module.exports.participantCollection = fs.readFileSync(path.join(__dirname, 'participantCollection.gql'), 'utf8');
+module.exports.contestStock = fs.readFileSync(path.join(__dirname, 'contestStock.gql'), 'utf8');
+module.exports.contestStockCollection = fs.readFileSync(path.join(__dirname, 'contestStockCollection.gql'), 'utf8');
+module.exports.leaderboard = fs.readFileSync(path.join(__dirname, 'leaderboard.gql'), 'utf8');
+module.exports.leaderboardCollection = fs.readFileSync(path.join(__dirname, 'leaderboardCollection.gql'), 'utf8');
+module.exports.message = fs.readFileSync(path.join(__dirname, 'message.gql'), 'utf8');
+module.exports.messageCollection = fs.readFileSync(path.join(__dirname, 'messageCollection.gql'), 'utf8');
+module.exports.contestStockFeed = fs.readFileSync(path.join(__dirname, 'contestStockFeed.gql'), 'utf8');
+module.exports.contestStockFeedCollection = fs.readFileSync(path.join(__dirname, 'contestStockFeedCollection.gql'), 'utf8');
+module.exports.userSearch = fs.readFileSync(path.join(__dirname, 'userSearch.gql'), 'utf8');
+module.exports.contestSearch = fs.readFileSync(path.join(__dirname, 'contestSearch.gql'), 'utf8');
+module.exports.participantSearch = fs.readFileSync(path.join(__dirname, 'participantSearch.gql'), 'utf8');
+module.exports.contestStockSearch = fs.readFileSync(path.join(__dirname, 'contestStockSearch.gql'), 'utf8');
+module.exports.leaderboardSearch = fs.readFileSync(path.join(__dirname, 'leaderboardSearch.gql'), 'utf8');
+module.exports.messageSearch = fs.readFileSync(path.join(__dirname, 'messageSearch.gql'), 'utf8');
+module.exports.contestStockFeedSearch = fs.readFileSync(path.join(__dirname, 'contestStockFeedSearch.gql'), 'utf8');

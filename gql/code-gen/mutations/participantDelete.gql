@@ -1,0 +1,5 @@
+mutation participantDelete($by: ParticipantByInput!){
+    participantDelete(by: $by){
+        deletedId
+    }
+}

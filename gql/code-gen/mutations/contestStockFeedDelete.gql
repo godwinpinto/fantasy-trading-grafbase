@@ -1,0 +1,5 @@
+mutation contestStockFeedDelete($by: ContestStockFeedByInput!){
+    contestStockFeedDelete(by: $by){
+        deletedId
+    }
+}

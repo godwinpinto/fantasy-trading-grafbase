@@ -1,0 +1,5 @@
+mutation leaderboardDeleteMany($input: [LeaderboardDeleteManyInput!]!){
+    leaderboardDeleteMany(input: $input){
+        deletedIds
+    }
+}

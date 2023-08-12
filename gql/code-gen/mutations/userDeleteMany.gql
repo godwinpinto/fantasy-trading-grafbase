@@ -1,0 +1,5 @@
+mutation userDeleteMany($input: [UserDeleteManyInput!]!){
+    userDeleteMany(input: $input){
+        deletedIds
+    }
+}

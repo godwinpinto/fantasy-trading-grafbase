@@ -1,0 +1,5 @@
+mutation contestStockDeleteMany($input: [ContestStockDeleteManyInput!]!){
+    contestStockDeleteMany(input: $input){
+        deletedIds
+    }
+}

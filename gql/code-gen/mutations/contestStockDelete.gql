@@ -1,0 +1,5 @@
+mutation contestStockDelete($by: ContestStockByInput!){
+    contestStockDelete(by: $by){
+        deletedId
+    }
+}

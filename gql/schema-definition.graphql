@@ -1,0 +1,1819 @@
+"""Directs the executor to return values as a Streaming response."""
+directive @live on QUERY
+
+"""Indicates that an input object is a oneOf input object"""
+directive @oneOf on INPUT_OBJECT
+
+type Contest {
+  name: String!
+  description: String!
+  status: String!
+  maxParticipants: Int
+  participants(after: String, before: String, first: Int, last: Int, orderBy: ContestOrderByInput): ParticipantConnection
+  leaderboard(after: String, before: String, first: Int, last: Int, orderBy: ContestOrderByInput): LeaderboardConnection
+  contestDate: DateTime
+  contestStock(after: String, before: String, first: Int, last: Int, orderBy: ContestOrderByInput): ContestStockConnection
+  contestStockFeed(after: String, before: String, first: Int, last: Int, orderBy: ContestOrderByInput): ContestStockFeedConnection
+  message(after: String, before: String, first: Int, last: Int, orderBy: ContestOrderByInput): MessageConnection
+
+  """Unique identifier"""
+  id: ID!
+
+  """when the model was updated"""
+  updatedAt: DateTime!
+
+  """when the model was created"""
+  createdAt: DateTime!
+}
+
+input ContestByInput {
+  id: ID
+}
+
+input ContestCollectionFilterInput {
+  id: IDCollectionFilterInput
+}
+
+type ContestConnection {
+  """Information to aid in pagination"""
+  pageInfo: PageInfo!
+  edges: [ContestEdge]
+}
+
+"""Input to create a Contest"""
+input ContestCreateInput {
+  name: String!
+  description: String!
+  status: String!
+  maxParticipants: Int
+  participants: [ContestToParticipantCreateParticipantRelation]
+  leaderboard: [ContestToLeaderboardCreateLeaderboardRelation]
+  contestDate: DateTime
+  contestStock: [ContestToContestStockCreateContestStockRelation]
+  contestStockFeed: [ContestToContestStockFeedCreateContestStockFeedRelation]
+  message: [ContestToMessageCreateMessageRelation]
+}
+
+input ContestCreateManyInput {
+  input: ContestCreateInput!
+}
+
+type ContestCreateManyPayload {
+  contestCollection: [Contest!]!
+}
+
+type ContestCreatePayload {
+  contest: Contest
+}
+
+input ContestDeleteManyInput {
+  by: ContestByInput!
+}
+
+type ContestDeleteManyPayload {
+  deletedIds: [ID!]!
+}
+
+type ContestDeletePayload {
+  deletedId: ID!
+}
+
+type ContestEdge {
+  node: Contest!
+  cursor: String!
+}
+
+input ContestOrderByInput {
+  createdAt: OrderByDirection
+}
+
+type ContestSearchConnection {
+  pageInfo: PageInfo!
+  searchInfo: SearchInfo
+  edges: [ContestSearchEdge!]!
+}
+
+type ContestSearchEdge {
+  node: Contest!
+  cursor: String!
+  score: Float!
+}
+
+input ContestSearchFilterInput {
+  ALL: [ContestSearchFilterInput!]
+  ANY: [ContestSearchFilterInput!]
+  NONE: [ContestSearchFilterInput!]
+  NOT: ContestSearchFilterInput
+  contestDate: DateTimeOrNullSearchFilterInput
+  createdAt: DateTimeSearchFilterInput
+  description: StringSearchFilterInput
+  maxParticipants: IntOrNullSearchFilterInput
+  name: StringSearchFilterInput
+  status: StringSearchFilterInput
+  updatedAt: DateTimeSearchFilterInput
+}
+
+type ContestStock {
+  stockCode: String!
+  stockDescription: String!
+  stockImage: String!
+  stockPrice: Float
+  contest: Contest
+  contestId: String
+
+  """Unique identifier"""
+  id: ID!
+
+  """when the model was updated"""
+  updatedAt: DateTime!
+
+  """when the model was created"""
+  createdAt: DateTime!
+}
+
+input ContestStockByInput {
+  id: ID
+}
+
+input ContestStockCollectionFilterInput {
+  id: IDCollectionFilterInput
+}
+
+type ContestStockConnection {
+  """Information to aid in pagination"""
+  pageInfo: PageInfo!
+  edges: [ContestStockEdge]
+}
+
+"""Input to create a ContestStock"""
+input ContestStockCreateInput {
+  stockCode: String!
+  stockDescription: String!
+  stockImage: String!
+  stockPrice: Float
+  contest: ContestToContestStockCreateContestRelation
+  contestId: String
+}
+
+input ContestStockCreateManyInput {
+  input: ContestStockCreateInput!
+}
+
+type ContestStockCreateManyPayload {
+  contestStockCollection: [ContestStock!]!
+}
+
+type ContestStockCreatePayload {
+  contestStock: ContestStock
+}
+
+input ContestStockDeleteManyInput {
+  by: ContestStockByInput!
+}
+
+type ContestStockDeleteManyPayload {
+  deletedIds: [ID!]!
+}
+
+type ContestStockDeletePayload {
+  deletedId: ID!
+}
+
+type ContestStockEdge {
+  node: ContestStock!
+  cursor: String!
+}
+
+type ContestStockFeed {
+  stockFeed: String!
+  contest: Contest
+  contestId: String
+
+  """Unique identifier"""
+  id: ID!
+
+  """when the model was updated"""
+  updatedAt: DateTime!
+
+  """when the model was created"""
+  createdAt: DateTime!
+}
+
+input ContestStockFeedByInput {
+  id: ID
+}
+
+input ContestStockFeedCollectionFilterInput {
+  id: IDCollectionFilterInput
+}
+
+type ContestStockFeedConnection {
+  """Information to aid in pagination"""
+  pageInfo: PageInfo!
+  edges: [ContestStockFeedEdge]
+}
+
+"""Input to create a ContestStockFeed"""
+input ContestStockFeedCreateInput {
+  stockFeed: String!
+  contest: ContestToContestStockFeedCreateContestRelation
+  contestId: String
+}
+
+input ContestStockFeedCreateManyInput {
+  input: ContestStockFeedCreateInput!
+}
+
+type ContestStockFeedCreateManyPayload {
+  contestStockFeedCollection: [ContestStockFeed!]!
+}
+
+type ContestStockFeedCreatePayload {
+  contestStockFeed: ContestStockFeed
+}
+
+input ContestStockFeedDeleteManyInput {
+  by: ContestStockFeedByInput!
+}
+
+type ContestStockFeedDeleteManyPayload {
+  deletedIds: [ID!]!
+}
+
+type ContestStockFeedDeletePayload {
+  deletedId: ID!
+}
+
+type ContestStockFeedEdge {
+  node: ContestStockFeed!
+  cursor: String!
+}
+
+input ContestStockFeedOrderByInput {
+  createdAt: OrderByDirection
+}
+
+type ContestStockFeedSearchConnection {
+  pageInfo: PageInfo!
+  searchInfo: SearchInfo
+  edges: [ContestStockFeedSearchEdge!]!
+}
+
+type ContestStockFeedSearchEdge {
+  node: ContestStockFeed!
+  cursor: String!
+  score: Float!
+}
+
+input ContestStockFeedSearchFilterInput {
+  ALL: [ContestStockFeedSearchFilterInput!]
+  ANY: [ContestStockFeedSearchFilterInput!]
+  NONE: [ContestStockFeedSearchFilterInput!]
+  NOT: ContestStockFeedSearchFilterInput
+  contestId: StringOrNullSearchFilterInput
+  createdAt: DateTimeSearchFilterInput
+  stockFeed: StringSearchFilterInput
+  updatedAt: DateTimeSearchFilterInput
+}
+
+"""Input to update a ContestStockFeed"""
+input ContestStockFeedUpdateInput {
+  stockFeed: String
+  contest: ContestToContestStockFeedUpdateContestRelation
+  contestId: String
+}
+
+input ContestStockFeedUpdateManyInput {
+  by: ContestStockFeedByInput!
+  input: ContestStockFeedUpdateInput!
+}
+
+type ContestStockFeedUpdateManyPayload {
+  contestStockFeedCollection: [ContestStockFeed!]!
+}
+
+type ContestStockFeedUpdatePayload {
+  contestStockFeed: ContestStockFeed
+}
+
+input ContestStockOrderByInput {
+  createdAt: OrderByDirection
+}
+
+type ContestStockSearchConnection {
+  pageInfo: PageInfo!
+  searchInfo: SearchInfo
+  edges: [ContestStockSearchEdge!]!
+}
+
+type ContestStockSearchEdge {
+  node: ContestStock!
+  cursor: String!
+  score: Float!
+}
+
+input ContestStockSearchFilterInput {
+  ALL: [ContestStockSearchFilterInput!]
+  ANY: [ContestStockSearchFilterInput!]
+  NONE: [ContestStockSearchFilterInput!]
+  NOT: ContestStockSearchFilterInput
+  contestId: StringOrNullSearchFilterInput
+  createdAt: DateTimeSearchFilterInput
+  stockCode: StringSearchFilterInput
+  stockDescription: StringSearchFilterInput
+  stockImage: StringSearchFilterInput
+  stockPrice: FloatOrNullSearchFilterInput
+  updatedAt: DateTimeSearchFilterInput
+}
+
+"""Input to update a ContestStock"""
+input ContestStockUpdateInput {
+  stockCode: String
+  stockDescription: String
+  stockImage: String
+  stockPrice: FloatOperationsInput
+  contest: ContestToContestStockUpdateContestRelation
+  contestId: String
+}
+
+input ContestStockUpdateManyInput {
+  by: ContestStockByInput!
+  input: ContestStockUpdateInput!
+}
+
+type ContestStockUpdateManyPayload {
+  contestStockCollection: [ContestStock!]!
+}
+
+type ContestStockUpdatePayload {
+  contestStock: ContestStock
+}
+
+"""
+Input to create a Contest for the ContestToContestStock relation of ContestStock
+"""
+input ContestToContestStockCreateContest {
+  name: String!
+  description: String!
+  status: String!
+  maxParticipants: Int
+  participants: [ContestToParticipantCreateParticipantRelation]
+  leaderboard: [ContestToLeaderboardCreateLeaderboardRelation]
+  contestDate: DateTime
+  contestStock: [ContestToContestStockCreateContestStockRelation]
+  contestStockFeed: [ContestToContestStockFeedCreateContestStockFeedRelation]
+  message: [ContestToMessageCreateMessageRelation]
+}
+
+"""
+Input to link to or create a Contest for the ContestToContestStock relation of ContestStock
+"""
+input ContestToContestStockCreateContestRelation {
+  create: ContestToContestStockCreateContest
+  link: ID
+}
+
+"""
+Input to create a ContestStock for the ContestToContestStock relation of Contest
+"""
+input ContestToContestStockCreateContestStock {
+  stockCode: String!
+  stockDescription: String!
+  stockImage: String!
+  stockPrice: Float
+  contestId: String
+}
+
+"""
+Input to link to or create a ContestStock for the ContestToContestStock relation of Contest
+"""
+input ContestToContestStockCreateContestStockRelation {
+  create: ContestToContestStockCreateContestStock
+  link: ID
+}
+
+"""
+Input to create a Contest for the ContestToContestStockFeed relation of ContestStockFeed
+"""
+input ContestToContestStockFeedCreateContest {
+  name: String!
+  description: String!
+  status: String!
+  maxParticipants: Int
+  participants: [ContestToParticipantCreateParticipantRelation]
+  leaderboard: [ContestToLeaderboardCreateLeaderboardRelation]
+  contestDate: DateTime
+  contestStock: [ContestToContestStockCreateContestStockRelation]
+  contestStockFeed: [ContestToContestStockFeedCreateContestStockFeedRelation]
+  message: [ContestToMessageCreateMessageRelation]
+}
+
+"""
+Input to link to or create a Contest for the ContestToContestStockFeed relation of ContestStockFeed
+"""
+input ContestToContestStockFeedCreateContestRelation {
+  create: ContestToContestStockFeedCreateContest
+  link: ID
+}
+
+"""
+Input to create a ContestStockFeed for the ContestToContestStockFeed relation of Contest
+"""
+input ContestToContestStockFeedCreateContestStockFeed {
+  stockFeed: String!
+  contestId: String
+}
+
+"""
+Input to link to or create a ContestStockFeed for the ContestToContestStockFeed relation of Contest
+"""
+input ContestToContestStockFeedCreateContestStockFeedRelation {
+  create: ContestToContestStockFeedCreateContestStockFeed
+  link: ID
+}
+
+"""
+Input to link/unlink to or create a Contest for the ContestToContestStockFeed relation of ContestStockFeed
+"""
+input ContestToContestStockFeedUpdateContestRelation {
+  create: ContestToContestStockFeedCreateContest
+  link: ID
+  unlink: ID
+}
+
+"""
+Input to link/unlink to or create a ContestStockFeed for the ContestToContestStockFeed relation of Contest
+"""
+input ContestToContestStockFeedUpdateContestStockFeedRelation {
+  create: ContestToContestStockFeedCreateContestStockFeed
+  link: ID
+  unlink: ID
+}
+
+"""
+Input to link/unlink to or create a Contest for the ContestToContestStock relation of ContestStock
+"""
+input ContestToContestStockUpdateContestRelation {
+  create: ContestToContestStockCreateContest
+  link: ID
+  unlink: ID
+}
+
+"""
+Input to link/unlink to or create a ContestStock for the ContestToContestStock relation of Contest
+"""
+input ContestToContestStockUpdateContestStockRelation {
+  create: ContestToContestStockCreateContestStock
+  link: ID
+  unlink: ID
+}
+
+"""
+Input to create a Contest for the ContestToLeaderboard relation of Leaderboard
+"""
+input ContestToLeaderboardCreateContest {
+  name: String!
+  description: String!
+  status: String!
+  maxParticipants: Int
+  participants: [ContestToParticipantCreateParticipantRelation]
+  leaderboard: [ContestToLeaderboardCreateLeaderboardRelation]
+  contestDate: DateTime
+  contestStock: [ContestToContestStockCreateContestStockRelation]
+  contestStockFeed: [ContestToContestStockFeedCreateContestStockFeedRelation]
+  message: [ContestToMessageCreateMessageRelation]
+}
+
+"""
+Input to link to or create a Contest for the ContestToLeaderboard relation of Leaderboard
+"""
+input ContestToLeaderboardCreateContestRelation {
+  create: ContestToLeaderboardCreateContest
+  link: ID
+}
+
+"""
+Input to create a Leaderboard for the ContestToLeaderboard relation of Contest
+"""
+input ContestToLeaderboardCreateLeaderboard {
+  rank: Int
+  amount: Float
+  user: LeaderboardToUserCreateUserRelation
+  userId: String
+  contestId: String
+}
+
+"""
+Input to link to or create a Leaderboard for the ContestToLeaderboard relation of Contest
+"""
+input ContestToLeaderboardCreateLeaderboardRelation {
+  create: ContestToLeaderboardCreateLeaderboard
+  link: ID
+}
+
+"""
+Input to link/unlink to or create a Contest for the ContestToLeaderboard relation of Leaderboard
+"""
+input ContestToLeaderboardUpdateContestRelation {
+  create: ContestToLeaderboardCreateContest
+  link: ID
+  unlink: ID
+}
+
+"""
+Input to link/unlink to or create a Leaderboard for the ContestToLeaderboard relation of Contest
+"""
+input ContestToLeaderboardUpdateLeaderboardRelation {
+  create: ContestToLeaderboardCreateLeaderboard
+  link: ID
+  unlink: ID
+}
+
+"""Input to create a Contest for the ContestToMessage relation of Message"""
+input ContestToMessageCreateContest {
+  name: String!
+  description: String!
+  status: String!
+  maxParticipants: Int
+  participants: [ContestToParticipantCreateParticipantRelation]
+  leaderboard: [ContestToLeaderboardCreateLeaderboardRelation]
+  contestDate: DateTime
+  contestStock: [ContestToContestStockCreateContestStockRelation]
+  contestStockFeed: [ContestToContestStockFeedCreateContestStockFeedRelation]
+  message: [ContestToMessageCreateMessageRelation]
+}
+
+"""
+Input to link to or create a Contest for the ContestToMessage relation of Message
+"""
+input ContestToMessageCreateContestRelation {
+  create: ContestToMessageCreateContest
+  link: ID
+}
+
+"""Input to create a Message for the ContestToMessage relation of Contest"""
+input ContestToMessageCreateMessage {
+  body: String!
+  user: MessageToUserCreateUserRelation
+  userId: String
+  contestId: String
+  msgDateTime: DateTime
+}
+
+"""
+Input to link to or create a Message for the ContestToMessage relation of Contest
+"""
+input ContestToMessageCreateMessageRelation {
+  create: ContestToMessageCreateMessage
+  link: ID
+}
+
+"""
+Input to link/unlink to or create a Contest for the ContestToMessage relation of Message
+"""
+input ContestToMessageUpdateContestRelation {
+  create: ContestToMessageCreateContest
+  link: ID
+  unlink: ID
+}
+
+"""
+Input to link/unlink to or create a Message for the ContestToMessage relation of Contest
+"""
+input ContestToMessageUpdateMessageRelation {
+  create: ContestToMessageCreateMessage
+  link: ID
+  unlink: ID
+}
+
+"""
+Input to create a Contest for the ContestToParticipant relation of Participant
+"""
+input ContestToParticipantCreateContest {
+  name: String!
+  description: String!
+  status: String!
+  maxParticipants: Int
+  participants: [ContestToParticipantCreateParticipantRelation]
+  leaderboard: [ContestToLeaderboardCreateLeaderboardRelation]
+  contestDate: DateTime
+  contestStock: [ContestToContestStockCreateContestStockRelation]
+  contestStockFeed: [ContestToContestStockFeedCreateContestStockFeedRelation]
+  message: [ContestToMessageCreateMessageRelation]
+}
+
+"""
+Input to link to or create a Contest for the ContestToParticipant relation of Participant
+"""
+input ContestToParticipantCreateContestRelation {
+  create: ContestToParticipantCreateContest
+  link: ID
+}
+
+"""
+Input to create a Participant for the ContestToParticipant relation of Contest
+"""
+input ContestToParticipantCreateParticipant {
+  user: ParticipantToUserCreateUserRelation
+  userId: String
+  contestId: String
+  balanceAmount: Float!
+  stockCode: String
+  stockUnitBuyPrice: Float
+  betType: String
+  stockUnits: Float
+}
+
+"""
+Input to link to or create a Participant for the ContestToParticipant relation of Contest
+"""
+input ContestToParticipantCreateParticipantRelation {
+  create: ContestToParticipantCreateParticipant
+  link: ID
+}
+
+"""
+Input to link/unlink to or create a Contest for the ContestToParticipant relation of Participant
+"""
+input ContestToParticipantUpdateContestRelation {
+  create: ContestToParticipantCreateContest
+  link: ID
+  unlink: ID
+}
+
+"""
+Input to link/unlink to or create a Participant for the ContestToParticipant relation of Contest
+"""
+input ContestToParticipantUpdateParticipantRelation {
+  create: ContestToParticipantCreateParticipant
+  link: ID
+  unlink: ID
+}
+
+"""Input to update a Contest"""
+input ContestUpdateInput {
+  name: String
+  description: String
+  status: String
+  maxParticipants: IntOperationsInput
+  participants: [ContestToParticipantUpdateParticipantRelation]
+  leaderboard: [ContestToLeaderboardUpdateLeaderboardRelation]
+  contestDate: DateTime
+  contestStock: [ContestToContestStockUpdateContestStockRelation]
+  contestStockFeed: [ContestToContestStockFeedUpdateContestStockFeedRelation]
+  message: [ContestToMessageUpdateMessageRelation]
+}
+
+input ContestUpdateManyInput {
+  by: ContestByInput!
+  input: ContestUpdateInput!
+}
+
+type ContestUpdateManyPayload {
+  contestCollection: [Contest!]!
+}
+
+type ContestUpdatePayload {
+  contest: Contest
+}
+
+"""
+A date-time string at UTC, such as 2007-12-03T10:15:30Z, is compliant with the date-time format outlined in section 5.6 of the RFC 3339
+profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+
+This scalar is a description of an exact instant on the timeline such as the instant that a user account was created.
+
+# Input Coercion
+
+When expected as an input type, only RFC 3339 compliant date-time strings are accepted. All other input values raise a query error indicating an incorrect type.
+
+# Result Coercion
+
+Where an RFC 3339 compliant date-time string has a time-zone other than UTC, it is shifted to UTC.
+For example, the date-time string 2016-01-01T14:10:20+01:00 is shifted to 2016-01-01T13:10:20Z.
+"""
+scalar DateTime
+
+input DateTimeOrNullSearchFilterInput {
+  ALL: [DateTimeOrNullSearchFilterInput!]
+  ANY: [DateTimeOrNullSearchFilterInput!]
+  NONE: [DateTimeOrNullSearchFilterInput!]
+  NOT: DateTimeOrNullSearchFilterInput
+  eq: DateTime
+  neq: DateTime
+  gt: DateTime
+  gte: DateTime
+  lte: DateTime
+  lt: DateTime
+  in: [DateTime!]
+  notIn: [DateTime!]
+  isNull: Boolean
+}
+
+input DateTimeSearchFilterInput {
+  ALL: [DateTimeSearchFilterInput!]
+  ANY: [DateTimeSearchFilterInput!]
+  NONE: [DateTimeSearchFilterInput!]
+  NOT: DateTimeSearchFilterInput
+  eq: DateTime
+  neq: DateTime
+  gt: DateTime
+  gte: DateTime
+  lte: DateTime
+  lt: DateTime
+  in: [DateTime!]
+  notIn: [DateTime!]
+}
+
+"""Possible operations for a Float field"""
+input FloatOperationsInput {
+  set: Float
+  increment: Float
+  decrement: Float
+}
+
+input FloatOrNullSearchFilterInput {
+  ALL: [FloatOrNullSearchFilterInput!]
+  ANY: [FloatOrNullSearchFilterInput!]
+  NONE: [FloatOrNullSearchFilterInput!]
+  NOT: FloatOrNullSearchFilterInput
+  eq: Float
+  neq: Float
+  gt: Float
+  gte: Float
+  lte: Float
+  lt: Float
+  in: [Float!]
+  notIn: [Float!]
+  isNull: Boolean
+}
+
+input FloatSearchFilterInput {
+  ALL: [FloatSearchFilterInput!]
+  ANY: [FloatSearchFilterInput!]
+  NONE: [FloatSearchFilterInput!]
+  NOT: FloatSearchFilterInput
+  eq: Float
+  neq: Float
+  gt: Float
+  gte: Float
+  lte: Float
+  lt: Float
+  in: [Float!]
+  notIn: [Float!]
+}
+
+input IDCollectionFilterInput {
+  in: [ID!]
+}
+
+"""Possible operations for an Int field"""
+input IntOperationsInput {
+  set: Int
+  increment: Int
+  decrement: Int
+}
+
+input IntOrNullSearchFilterInput {
+  ALL: [IntOrNullSearchFilterInput!]
+  ANY: [IntOrNullSearchFilterInput!]
+  NONE: [IntOrNullSearchFilterInput!]
+  NOT: IntOrNullSearchFilterInput
+  eq: Int
+  neq: Int
+  gt: Int
+  gte: Int
+  lte: Int
+  lt: Int
+  in: [Int!]
+  notIn: [Int!]
+  isNull: Boolean
+}
+
+type Leaderboard {
+  rank: Int
+  amount: Float
+  user: User
+  userId: String
+  contest: Contest
+  contestId: String
+
+  """Unique identifier"""
+  id: ID!
+
+  """when the model was updated"""
+  updatedAt: DateTime!
+
+  """when the model was created"""
+  createdAt: DateTime!
+}
+
+input LeaderboardByInput {
+  id: ID
+}
+
+input LeaderboardCollectionFilterInput {
+  id: IDCollectionFilterInput
+}
+
+type LeaderboardConnection {
+  """Information to aid in pagination"""
+  pageInfo: PageInfo!
+  edges: [LeaderboardEdge]
+}
+
+"""Input to create a Leaderboard"""
+input LeaderboardCreateInput {
+  rank: Int
+  amount: Float
+  user: LeaderboardToUserCreateUserRelation
+  userId: String
+  contest: ContestToLeaderboardCreateContestRelation
+  contestId: String
+}
+
+input LeaderboardCreateManyInput {
+  input: LeaderboardCreateInput!
+}
+
+type LeaderboardCreateManyPayload {
+  leaderboardCollection: [Leaderboard!]!
+}
+
+type LeaderboardCreatePayload {
+  leaderboard: Leaderboard
+}
+
+input LeaderboardDeleteManyInput {
+  by: LeaderboardByInput!
+}
+
+type LeaderboardDeleteManyPayload {
+  deletedIds: [ID!]!
+}
+
+type LeaderboardDeletePayload {
+  deletedId: ID!
+}
+
+type LeaderboardEdge {
+  node: Leaderboard!
+  cursor: String!
+}
+
+input LeaderboardOrderByInput {
+  createdAt: OrderByDirection
+}
+
+type LeaderboardSearchConnection {
+  pageInfo: PageInfo!
+  searchInfo: SearchInfo
+  edges: [LeaderboardSearchEdge!]!
+}
+
+type LeaderboardSearchEdge {
+  node: Leaderboard!
+  cursor: String!
+  score: Float!
+}
+
+input LeaderboardSearchFilterInput {
+  ALL: [LeaderboardSearchFilterInput!]
+  ANY: [LeaderboardSearchFilterInput!]
+  NONE: [LeaderboardSearchFilterInput!]
+  NOT: LeaderboardSearchFilterInput
+  amount: FloatOrNullSearchFilterInput
+  contestId: StringOrNullSearchFilterInput
+  createdAt: DateTimeSearchFilterInput
+  rank: IntOrNullSearchFilterInput
+  updatedAt: DateTimeSearchFilterInput
+  userId: StringOrNullSearchFilterInput
+}
+
+"""
+Input to create a Leaderboard for the LeaderboardToUser relation of User
+"""
+input LeaderboardToUserCreateLeaderboard {
+  rank: Int
+  amount: Float
+  userId: String
+  contest: ContestToLeaderboardCreateContestRelation
+  contestId: String
+}
+
+"""
+Input to link to or create a Leaderboard for the LeaderboardToUser relation of User
+"""
+input LeaderboardToUserCreateLeaderboardRelation {
+  create: LeaderboardToUserCreateLeaderboard
+  link: ID
+}
+
+"""
+Input to create a User for the LeaderboardToUser relation of Leaderboard
+"""
+input LeaderboardToUserCreateUser {
+  username: String!
+  email: String!
+  profileImage: String!
+  participants: [ParticipantToUserCreateParticipantRelation]
+  leaderboard: [LeaderboardToUserCreateLeaderboardRelation]
+  message: [MessageToUserCreateMessageRelation]
+}
+
+"""
+Input to link to or create a User for the LeaderboardToUser relation of Leaderboard
+"""
+input LeaderboardToUserCreateUserRelation {
+  create: LeaderboardToUserCreateUser
+  link: ID
+}
+
+"""
+Input to link/unlink to or create a Leaderboard for the LeaderboardToUser relation of User
+"""
+input LeaderboardToUserUpdateLeaderboardRelation {
+  create: LeaderboardToUserCreateLeaderboard
+  link: ID
+  unlink: ID
+}
+
+"""
+Input to link/unlink to or create a User for the LeaderboardToUser relation of Leaderboard
+"""
+input LeaderboardToUserUpdateUserRelation {
+  create: LeaderboardToUserCreateUser
+  link: ID
+  unlink: ID
+}
+
+"""Input to update a Leaderboard"""
+input LeaderboardUpdateInput {
+  rank: IntOperationsInput
+  amount: FloatOperationsInput
+  user: LeaderboardToUserUpdateUserRelation
+  userId: String
+  contest: ContestToLeaderboardUpdateContestRelation
+  contestId: String
+}
+
+input LeaderboardUpdateManyInput {
+  by: LeaderboardByInput!
+  input: LeaderboardUpdateInput!
+}
+
+type LeaderboardUpdateManyPayload {
+  leaderboardCollection: [Leaderboard!]!
+}
+
+type LeaderboardUpdatePayload {
+  leaderboard: Leaderboard
+}
+
+type Message {
+  body: String!
+  user: User
+  userId: String
+  contest: Contest
+  contestId: String
+  msgDateTime: DateTime
+
+  """Unique identifier"""
+  id: ID!
+
+  """when the model was updated"""
+  updatedAt: DateTime!
+
+  """when the model was created"""
+  createdAt: DateTime!
+}
+
+input MessageByInput {
+  id: ID
+}
+
+input MessageCollectionFilterInput {
+  id: IDCollectionFilterInput
+}
+
+type MessageConnection {
+  """Information to aid in pagination"""
+  pageInfo: PageInfo!
+  edges: [MessageEdge]
+}
+
+"""Input to create a Message"""
+input MessageCreateInput {
+  body: String!
+  user: MessageToUserCreateUserRelation
+  userId: String
+  contest: ContestToMessageCreateContestRelation
+  contestId: String
+  msgDateTime: DateTime
+}
+
+input MessageCreateManyInput {
+  input: MessageCreateInput!
+}
+
+type MessageCreateManyPayload {
+  messageCollection: [Message!]!
+}
+
+type MessageCreatePayload {
+  message: Message
+}
+
+input MessageDeleteManyInput {
+  by: MessageByInput!
+}
+
+type MessageDeleteManyPayload {
+  deletedIds: [ID!]!
+}
+
+type MessageDeletePayload {
+  deletedId: ID!
+}
+
+type MessageEdge {
+  node: Message!
+  cursor: String!
+}
+
+input MessageOrderByInput {
+  createdAt: OrderByDirection
+}
+
+type MessageSearchConnection {
+  pageInfo: PageInfo!
+  searchInfo: SearchInfo
+  edges: [MessageSearchEdge!]!
+}
+
+type MessageSearchEdge {
+  node: Message!
+  cursor: String!
+  score: Float!
+}
+
+input MessageSearchFilterInput {
+  ALL: [MessageSearchFilterInput!]
+  ANY: [MessageSearchFilterInput!]
+  NONE: [MessageSearchFilterInput!]
+  NOT: MessageSearchFilterInput
+  body: StringSearchFilterInput
+  contestId: StringOrNullSearchFilterInput
+  createdAt: DateTimeSearchFilterInput
+  msgDateTime: DateTimeOrNullSearchFilterInput
+  updatedAt: DateTimeSearchFilterInput
+  userId: StringOrNullSearchFilterInput
+}
+
+"""Input to create a Message for the MessageToUser relation of User"""
+input MessageToUserCreateMessage {
+  body: String!
+  userId: String
+  contest: ContestToMessageCreateContestRelation
+  contestId: String
+  msgDateTime: DateTime
+}
+
+"""
+Input to link to or create a Message for the MessageToUser relation of User
+"""
+input MessageToUserCreateMessageRelation {
+  create: MessageToUserCreateMessage
+  link: ID
+}
+
+"""Input to create a User for the MessageToUser relation of Message"""
+input MessageToUserCreateUser {
+  username: String!
+  email: String!
+  profileImage: String!
+  participants: [ParticipantToUserCreateParticipantRelation]
+  leaderboard: [LeaderboardToUserCreateLeaderboardRelation]
+  message: [MessageToUserCreateMessageRelation]
+}
+
+"""
+Input to link to or create a User for the MessageToUser relation of Message
+"""
+input MessageToUserCreateUserRelation {
+  create: MessageToUserCreateUser
+  link: ID
+}
+
+"""
+Input to link/unlink to or create a Message for the MessageToUser relation of User
+"""
+input MessageToUserUpdateMessageRelation {
+  create: MessageToUserCreateMessage
+  link: ID
+  unlink: ID
+}
+
+"""
+Input to link/unlink to or create a User for the MessageToUser relation of Message
+"""
+input MessageToUserUpdateUserRelation {
+  create: MessageToUserCreateUser
+  link: ID
+  unlink: ID
+}
+
+"""Input to update a Message"""
+input MessageUpdateInput {
+  body: String
+  user: MessageToUserUpdateUserRelation
+  userId: String
+  contest: ContestToMessageUpdateContestRelation
+  contestId: String
+  msgDateTime: DateTime
+}
+
+input MessageUpdateManyInput {
+  by: MessageByInput!
+  input: MessageUpdateInput!
+}
+
+type MessageUpdateManyPayload {
+  messageCollection: [Message!]!
+}
+
+type MessageUpdatePayload {
+  message: Message
+}
+
+type Mutation {
+  """Create a User"""
+  userCreate(input: UserCreateInput!): UserCreatePayload
+
+  """Create multiple User"""
+  userCreateMany(input: [UserCreateManyInput!]!): UserCreateManyPayload
+
+  """Update a User"""
+  userUpdate(by: UserByInput!, input: UserUpdateInput!): UserUpdatePayload
+
+  """Update multiple User"""
+  userUpdateMany(input: [UserUpdateManyInput!]!): UserUpdateManyPayload
+
+  """Delete a User by ID or unique field"""
+  userDelete(by: UserByInput!): UserDeletePayload
+
+  """Delete multiple User"""
+  userDeleteMany(input: [UserDeleteManyInput!]!): UserDeleteManyPayload
+
+  """Create a Contest"""
+  contestCreate(input: ContestCreateInput!): ContestCreatePayload
+
+  """Create multiple Contest"""
+  contestCreateMany(input: [ContestCreateManyInput!]!): ContestCreateManyPayload
+
+  """Update a Contest"""
+  contestUpdate(by: ContestByInput!, input: ContestUpdateInput!): ContestUpdatePayload
+
+  """Update multiple Contest"""
+  contestUpdateMany(input: [ContestUpdateManyInput!]!): ContestUpdateManyPayload
+
+  """Delete a Contest by ID or unique field"""
+  contestDelete(by: ContestByInput!): ContestDeletePayload
+
+  """Delete multiple Contest"""
+  contestDeleteMany(input: [ContestDeleteManyInput!]!): ContestDeleteManyPayload
+
+  """Create a Participant"""
+  participantCreate(input: ParticipantCreateInput!): ParticipantCreatePayload
+
+  """Create multiple Participant"""
+  participantCreateMany(input: [ParticipantCreateManyInput!]!): ParticipantCreateManyPayload
+
+  """Update a Participant"""
+  participantUpdate(by: ParticipantByInput!, input: ParticipantUpdateInput!): ParticipantUpdatePayload
+
+  """Update multiple Participant"""
+  participantUpdateMany(input: [ParticipantUpdateManyInput!]!): ParticipantUpdateManyPayload
+
+  """Delete a Participant by ID or unique field"""
+  participantDelete(by: ParticipantByInput!): ParticipantDeletePayload
+
+  """Delete multiple Participant"""
+  participantDeleteMany(input: [ParticipantDeleteManyInput!]!): ParticipantDeleteManyPayload
+
+  """Create a ContestStock"""
+  contestStockCreate(input: ContestStockCreateInput!): ContestStockCreatePayload
+
+  """Create multiple ContestStock"""
+  contestStockCreateMany(input: [ContestStockCreateManyInput!]!): ContestStockCreateManyPayload
+
+  """Update a ContestStock"""
+  contestStockUpdate(by: ContestStockByInput!, input: ContestStockUpdateInput!): ContestStockUpdatePayload
+
+  """Update multiple ContestStock"""
+  contestStockUpdateMany(input: [ContestStockUpdateManyInput!]!): ContestStockUpdateManyPayload
+
+  """Delete a ContestStock by ID or unique field"""
+  contestStockDelete(by: ContestStockByInput!): ContestStockDeletePayload
+
+  """Delete multiple ContestStock"""
+  contestStockDeleteMany(input: [ContestStockDeleteManyInput!]!): ContestStockDeleteManyPayload
+
+  """Create a Leaderboard"""
+  leaderboardCreate(input: LeaderboardCreateInput!): LeaderboardCreatePayload
+
+  """Create multiple Leaderboard"""
+  leaderboardCreateMany(input: [LeaderboardCreateManyInput!]!): LeaderboardCreateManyPayload
+
+  """Update a Leaderboard"""
+  leaderboardUpdate(by: LeaderboardByInput!, input: LeaderboardUpdateInput!): LeaderboardUpdatePayload
+
+  """Update multiple Leaderboard"""
+  leaderboardUpdateMany(input: [LeaderboardUpdateManyInput!]!): LeaderboardUpdateManyPayload
+
+  """Delete a Leaderboard by ID or unique field"""
+  leaderboardDelete(by: LeaderboardByInput!): LeaderboardDeletePayload
+
+  """Delete multiple Leaderboard"""
+  leaderboardDeleteMany(input: [LeaderboardDeleteManyInput!]!): LeaderboardDeleteManyPayload
+
+  """Create a Message"""
+  messageCreate(input: MessageCreateInput!): MessageCreatePayload
+
+  """Create multiple Message"""
+  messageCreateMany(input: [MessageCreateManyInput!]!): MessageCreateManyPayload
+
+  """Update a Message"""
+  messageUpdate(by: MessageByInput!, input: MessageUpdateInput!): MessageUpdatePayload
+
+  """Update multiple Message"""
+  messageUpdateMany(input: [MessageUpdateManyInput!]!): MessageUpdateManyPayload
+
+  """Delete a Message by ID or unique field"""
+  messageDelete(by: MessageByInput!): MessageDeletePayload
+
+  """Delete multiple Message"""
+  messageDeleteMany(input: [MessageDeleteManyInput!]!): MessageDeleteManyPayload
+
+  """Create a ContestStockFeed"""
+  contestStockFeedCreate(input: ContestStockFeedCreateInput!): ContestStockFeedCreatePayload
+
+  """Create multiple ContestStockFeed"""
+  contestStockFeedCreateMany(input: [ContestStockFeedCreateManyInput!]!): ContestStockFeedCreateManyPayload
+
+  """Update a ContestStockFeed"""
+  contestStockFeedUpdate(by: ContestStockFeedByInput!, input: ContestStockFeedUpdateInput!): ContestStockFeedUpdatePayload
+
+  """Update multiple ContestStockFeed"""
+  contestStockFeedUpdateMany(input: [ContestStockFeedUpdateManyInput!]!): ContestStockFeedUpdateManyPayload
+
+  """Delete a ContestStockFeed by ID or unique field"""
+  contestStockFeedDelete(by: ContestStockFeedByInput!): ContestStockFeedDeletePayload
+
+  """Delete multiple ContestStockFeed"""
+  contestStockFeedDeleteMany(input: [ContestStockFeedDeleteManyInput!]!): ContestStockFeedDeleteManyPayload
+}
+
+enum OrderByDirection {
+  ASC
+  DESC
+}
+
+type PageInfo {
+  hasPreviousPage: Boolean!
+  hasNextPage: Boolean!
+  startCursor: String
+  endCursor: String
+}
+
+type Participant {
+  user: User
+  userId: String
+  contest: Contest
+  contestId: String
+  balanceAmount: Float!
+  stockCode: String
+  stockUnitBuyPrice: Float
+  betType: String
+  stockUnits: Float
+
+  """Unique identifier"""
+  id: ID!
+
+  """when the model was updated"""
+  updatedAt: DateTime!
+
+  """when the model was created"""
+  createdAt: DateTime!
+}
+
+input ParticipantByInput {
+  id: ID
+}
+
+input ParticipantCollectionFilterInput {
+  id: IDCollectionFilterInput
+}
+
+type ParticipantConnection {
+  """Information to aid in pagination"""
+  pageInfo: PageInfo!
+  edges: [ParticipantEdge]
+}
+
+"""Input to create a Participant"""
+input ParticipantCreateInput {
+  user: ParticipantToUserCreateUserRelation
+  userId: String
+  contest: ContestToParticipantCreateContestRelation
+  contestId: String
+  balanceAmount: Float!
+  stockCode: String
+  stockUnitBuyPrice: Float
+  betType: String
+  stockUnits: Float
+}
+
+input ParticipantCreateManyInput {
+  input: ParticipantCreateInput!
+}
+
+type ParticipantCreateManyPayload {
+  participantCollection: [Participant!]!
+}
+
+type ParticipantCreatePayload {
+  participant: Participant
+}
+
+input ParticipantDeleteManyInput {
+  by: ParticipantByInput!
+}
+
+type ParticipantDeleteManyPayload {
+  deletedIds: [ID!]!
+}
+
+type ParticipantDeletePayload {
+  deletedId: ID!
+}
+
+type ParticipantEdge {
+  node: Participant!
+  cursor: String!
+}
+
+input ParticipantOrderByInput {
+  createdAt: OrderByDirection
+}
+
+type ParticipantSearchConnection {
+  pageInfo: PageInfo!
+  searchInfo: SearchInfo
+  edges: [ParticipantSearchEdge!]!
+}
+
+type ParticipantSearchEdge {
+  node: Participant!
+  cursor: String!
+  score: Float!
+}
+
+input ParticipantSearchFilterInput {
+  ALL: [ParticipantSearchFilterInput!]
+  ANY: [ParticipantSearchFilterInput!]
+  NONE: [ParticipantSearchFilterInput!]
+  NOT: ParticipantSearchFilterInput
+  balanceAmount: FloatSearchFilterInput
+  betType: StringOrNullSearchFilterInput
+  contestId: StringOrNullSearchFilterInput
+  createdAt: DateTimeSearchFilterInput
+  stockCode: StringOrNullSearchFilterInput
+  stockUnitBuyPrice: FloatOrNullSearchFilterInput
+  stockUnits: FloatOrNullSearchFilterInput
+  updatedAt: DateTimeSearchFilterInput
+  userId: StringOrNullSearchFilterInput
+}
+
+"""
+Input to create a Participant for the ParticipantToUser relation of User
+"""
+input ParticipantToUserCreateParticipant {
+  userId: String
+  contest: ContestToParticipantCreateContestRelation
+  contestId: String
+  balanceAmount: Float!
+  stockCode: String
+  stockUnitBuyPrice: Float
+  betType: String
+  stockUnits: Float
+}
+
+"""
+Input to link to or create a Participant for the ParticipantToUser relation of User
+"""
+input ParticipantToUserCreateParticipantRelation {
+  create: ParticipantToUserCreateParticipant
+  link: ID
+}
+
+"""
+Input to create a User for the ParticipantToUser relation of Participant
+"""
+input ParticipantToUserCreateUser {
+  username: String!
+  email: String!
+  profileImage: String!
+  participants: [ParticipantToUserCreateParticipantRelation]
+  leaderboard: [LeaderboardToUserCreateLeaderboardRelation]
+  message: [MessageToUserCreateMessageRelation]
+}
+
+"""
+Input to link to or create a User for the ParticipantToUser relation of Participant
+"""
+input ParticipantToUserCreateUserRelation {
+  create: ParticipantToUserCreateUser
+  link: ID
+}
+
+"""
+Input to link/unlink to or create a Participant for the ParticipantToUser relation of User
+"""
+input ParticipantToUserUpdateParticipantRelation {
+  create: ParticipantToUserCreateParticipant
+  link: ID
+  unlink: ID
+}
+
+"""
+Input to link/unlink to or create a User for the ParticipantToUser relation of Participant
+"""
+input ParticipantToUserUpdateUserRelation {
+  create: ParticipantToUserCreateUser
+  link: ID
+  unlink: ID
+}
+
+"""Input to update a Participant"""
+input ParticipantUpdateInput {
+  user: ParticipantToUserUpdateUserRelation
+  userId: String
+  contest: ContestToParticipantUpdateContestRelation
+  contestId: String
+  balanceAmount: FloatOperationsInput
+  stockCode: String
+  stockUnitBuyPrice: FloatOperationsInput
+  betType: String
+  stockUnits: FloatOperationsInput
+}
+
+input ParticipantUpdateManyInput {
+  by: ParticipantByInput!
+  input: ParticipantUpdateInput!
+}
+
+type ParticipantUpdateManyPayload {
+  participantCollection: [Participant!]!
+}
+
+type ParticipantUpdatePayload {
+  participant: Participant
+}
+
+type Query {
+  """Query a single User by an ID or a unique field"""
+  user(
+    """The field and value by which to query the User"""
+    by: UserByInput!
+  ): User
+
+  """Paginated query to fetch the whole list of `User`."""
+  userCollection(after: String, before: String, first: Int, last: Int, orderBy: UserOrderByInput, filter: UserCollectionFilterInput): UserConnection
+
+  """Query a single Contest by an ID or a unique field"""
+  contest(
+    """The field and value by which to query the Contest"""
+    by: ContestByInput!
+  ): Contest
+
+  """Paginated query to fetch the whole list of `Contest`."""
+  contestCollection(after: String, before: String, first: Int, last: Int, orderBy: ContestOrderByInput, filter: ContestCollectionFilterInput): ContestConnection
+
+  """Query a single Participant by an ID or a unique field"""
+  participant(
+    """The field and value by which to query the Participant"""
+    by: ParticipantByInput!
+  ): Participant
+
+  """Paginated query to fetch the whole list of `Participant`."""
+  participantCollection(after: String, before: String, first: Int, last: Int, orderBy: ParticipantOrderByInput, filter: ParticipantCollectionFilterInput): ParticipantConnection
+
+  """Query a single ContestStock by an ID or a unique field"""
+  contestStock(
+    """The field and value by which to query the ContestStock"""
+    by: ContestStockByInput!
+  ): ContestStock
+
+  """Paginated query to fetch the whole list of `ContestStock`."""
+  contestStockCollection(after: String, before: String, first: Int, last: Int, orderBy: ContestStockOrderByInput, filter: ContestStockCollectionFilterInput): ContestStockConnection
+
+  """Query a single Leaderboard by an ID or a unique field"""
+  leaderboard(
+    """The field and value by which to query the Leaderboard"""
+    by: LeaderboardByInput!
+  ): Leaderboard
+
+  """Paginated query to fetch the whole list of `Leaderboard`."""
+  leaderboardCollection(after: String, before: String, first: Int, last: Int, orderBy: LeaderboardOrderByInput, filter: LeaderboardCollectionFilterInput): LeaderboardConnection
+
+  """Query a single Message by an ID or a unique field"""
+  message(
+    """The field and value by which to query the Message"""
+    by: MessageByInput!
+  ): Message
+
+  """Paginated query to fetch the whole list of `Message`."""
+  messageCollection(after: String, before: String, first: Int, last: Int, orderBy: MessageOrderByInput, filter: MessageCollectionFilterInput): MessageConnection
+
+  """Query a single ContestStockFeed by an ID or a unique field"""
+  contestStockFeed(
+    """The field and value by which to query the ContestStockFeed"""
+    by: ContestStockFeedByInput!
+  ): ContestStockFeed
+
+  """Paginated query to fetch the whole list of `ContestStockFeed`."""
+  contestStockFeedCollection(after: String, before: String, first: Int, last: Int, orderBy: ContestStockFeedOrderByInput, filter: ContestStockFeedCollectionFilterInput): ContestStockFeedConnection
+
+  """Search `User`"""
+  userSearch(
+    """Text to search."""
+    query: String
+
+    """
+    Fields used for searching. Restricted to String, URL, Email and PhoneNumber fields. If not specified it defaults to all @search fields with those types.
+    """
+    fields: [String!]
+    filter: UserSearchFilterInput
+    first: Int
+    after: String
+    last: Int
+    before: String
+  ): UserSearchConnection
+
+  """Search `Contest`"""
+  contestSearch(
+    """Text to search."""
+    query: String
+
+    """
+    Fields used for searching. Restricted to String, URL, Email and PhoneNumber fields. If not specified it defaults to all @search fields with those types.
+    """
+    fields: [String!]
+    filter: ContestSearchFilterInput
+    first: Int
+    after: String
+    last: Int
+    before: String
+  ): ContestSearchConnection
+
+  """Search `Participant`"""
+  participantSearch(
+    """Text to search."""
+    query: String
+
+    """
+    Fields used for searching. Restricted to String, URL, Email and PhoneNumber fields. If not specified it defaults to all @search fields with those types.
+    """
+    fields: [String!]
+    filter: ParticipantSearchFilterInput
+    first: Int
+    after: String
+    last: Int
+    before: String
+  ): ParticipantSearchConnection
+
+  """Search `ContestStock`"""
+  contestStockSearch(
+    """Text to search."""
+    query: String
+
+    """
+    Fields used for searching. Restricted to String, URL, Email and PhoneNumber fields. If not specified it defaults to all @search fields with those types.
+    """
+    fields: [String!]
+    filter: ContestStockSearchFilterInput
+    first: Int
+    after: String
+    last: Int
+    before: String
+  ): ContestStockSearchConnection
+
+  """Search `Leaderboard`"""
+  leaderboardSearch(
+    """Text to search."""
+    query: String
+
+    """
+    Fields used for searching. Restricted to String, URL, Email and PhoneNumber fields. If not specified it defaults to all @search fields with those types.
+    """
+    fields: [String!]
+    filter: LeaderboardSearchFilterInput
+    first: Int
+    after: String
+    last: Int
+    before: String
+  ): LeaderboardSearchConnection
+
+  """Search `Message`"""
+  messageSearch(
+    """Text to search."""
+    query: String
+
+    """
+    Fields used for searching. Restricted to String, URL, Email and PhoneNumber fields. If not specified it defaults to all @search fields with those types.
+    """
+    fields: [String!]
+    filter: MessageSearchFilterInput
+    first: Int
+    after: String
+    last: Int
+    before: String
+  ): MessageSearchConnection
+
+  """Search `ContestStockFeed`"""
+  contestStockFeedSearch(
+    """Text to search."""
+    query: String
+
+    """
+    Fields used for searching. Restricted to String, URL, Email and PhoneNumber fields. If not specified it defaults to all @search fields with those types.
+    """
+    fields: [String!]
+    filter: ContestStockFeedSearchFilterInput
+    first: Int
+    after: String
+    last: Int
+    before: String
+  ): ContestStockFeedSearchConnection
+}
+
+type SearchInfo {
+  totalHits: Int!
+}
+
+input StringOrNullSearchFilterInput {
+  ALL: [StringOrNullSearchFilterInput!]
+  ANY: [StringOrNullSearchFilterInput!]
+  NONE: [StringOrNullSearchFilterInput!]
+  NOT: StringOrNullSearchFilterInput
+  eq: String
+  neq: String
+  gt: String
+  gte: String
+  lte: String
+  lt: String
+  in: [String!]
+  notIn: [String!]
+  regex: String
+  isNull: Boolean
+}
+
+input StringSearchFilterInput {
+  ALL: [StringSearchFilterInput!]
+  ANY: [StringSearchFilterInput!]
+  NONE: [StringSearchFilterInput!]
+  NOT: StringSearchFilterInput
+  eq: String
+  neq: String
+  gt: String
+  gte: String
+  lte: String
+  lt: String
+  in: [String!]
+  notIn: [String!]
+  regex: String
+}
+
+type User {
+  username: String!
+  email: String!
+  profileImage: String!
+  participants(after: String, before: String, first: Int, last: Int, orderBy: UserOrderByInput): ParticipantConnection
+  leaderboard(after: String, before: String, first: Int, last: Int, orderBy: UserOrderByInput): LeaderboardConnection
+  message(after: String, before: String, first: Int, last: Int, orderBy: UserOrderByInput): MessageConnection
+
+  """Unique identifier"""
+  id: ID!
+
+  """when the model was updated"""
+  updatedAt: DateTime!
+
+  """when the model was created"""
+  createdAt: DateTime!
+}
+
+input UserByInput {
+  id: ID
+  email: String
+}
+
+input UserCollectionFilterInput {
+  id: IDCollectionFilterInput
+}
+
+type UserConnection {
+  """Information to aid in pagination"""
+  pageInfo: PageInfo!
+  edges: [UserEdge]
+}
+
+"""Input to create a User"""
+input UserCreateInput {
+  username: String!
+  email: String!
+  profileImage: String!
+  participants: [ParticipantToUserCreateParticipantRelation]
+  leaderboard: [LeaderboardToUserCreateLeaderboardRelation]
+  message: [MessageToUserCreateMessageRelation]
+}
+
+input UserCreateManyInput {
+  input: UserCreateInput!
+}
+
+type UserCreateManyPayload {
+  userCollection: [User!]!
+}
+
+type UserCreatePayload {
+  user: User
+}
+
+input UserDeleteManyInput {
+  by: UserByInput!
+}
+
+type UserDeleteManyPayload {
+  deletedIds: [ID!]!
+}
+
+type UserDeletePayload {
+  deletedId: ID!
+}
+
+type UserEdge {
+  node: User!
+  cursor: String!
+}
+
+input UserOrderByInput {
+  createdAt: OrderByDirection
+}
+
+type UserSearchConnection {
+  pageInfo: PageInfo!
+  searchInfo: SearchInfo
+  edges: [UserSearchEdge!]!
+}
+
+type UserSearchEdge {
+  node: User!
+  cursor: String!
+  score: Float!
+}
+
+input UserSearchFilterInput {
+  ALL: [UserSearchFilterInput!]
+  ANY: [UserSearchFilterInput!]
+  NONE: [UserSearchFilterInput!]
+  NOT: UserSearchFilterInput
+  createdAt: DateTimeSearchFilterInput
+  email: StringSearchFilterInput
+  profileImage: StringSearchFilterInput
+  updatedAt: DateTimeSearchFilterInput
+  username: StringSearchFilterInput
+}
+
+"""Input to update a User"""
+input UserUpdateInput {
+  username: String
+  email: String
+  profileImage: String
+  participants: [ParticipantToUserUpdateParticipantRelation]
+  leaderboard: [LeaderboardToUserUpdateLeaderboardRelation]
+  message: [MessageToUserUpdateMessageRelation]
+}
+
+input UserUpdateManyInput {
+  by: UserByInput!
+  input: UserUpdateInput!
+}
+
+type UserUpdateManyPayload {
+  userCollection: [User!]!
+}
+
+type UserUpdatePayload {
+  user: User
+}

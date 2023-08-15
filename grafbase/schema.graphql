@@ -2,13 +2,13 @@ schema
   @auth(
     providers: [{ type: oidc, issuer: "{{ env.ISSUER_URL }}" }]
     rules: [
-      { allow: private }
+      { allow: public, operations: ["read"] }
+      { allow: private, operations:["create","update","delete"] }
     ]
   ) {
   query: Query
 }
 
-#      { allow: private, operations:["create","update","delete","read"] }
 type User @model @search{
   id:ID!
   username:String!

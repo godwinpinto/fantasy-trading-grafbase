@@ -61,7 +61,7 @@ export const useGamePlayStore = defineStore('gamePlayStore', () => {
         const variables: ContestSearchFilterInput = {
             status: {
                 eq: "A"
-            }
+            } 
         };
         const { onResult, onError } = useQuery(activeContestQuery, { filter: variables });
         onResult((results: IApolloResult) => {

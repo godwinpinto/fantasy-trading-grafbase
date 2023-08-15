@@ -9,7 +9,8 @@ import type { ApolloError } from '@apollo/client/errors';
 import type { IApolloResult } from '@/utils/commonInterfaces';
 import { createNewUser } from '@/graphql/mutations';
 import { apolloClient } from '@/utils/apolloLink'
-import {Auth0Client, createAuth0Client} from "@auth0/auth0-spa-js";
+import {Auth0Client, User, createAuth0Client} from "@auth0/auth0-spa-js";
+import { setContext } from "@apollo/client/link/context";
 
 export interface UserInfo {
   username: string
@@ -32,6 +33,7 @@ export const useUserStore = defineStore('userStore', () => {
   const auth0Config = {
     domain: import.meta.env.VITE_AUTH0_DOMAIN,
     clientId: import.meta.env.VITE_AUTH0_CLIENT_ID,
+    audience: "https://grafbase-godwinpinto.jp.auth0.com/api/v2/",
     authorizationParams: {
       redirect_uri: window.location.origin
     }
@@ -43,7 +45,6 @@ export const useUserStore = defineStore('userStore', () => {
     auth0=client;
   });
   
-  
   const gamePlayStore = useGamePlayStore();
   const { participantDetails } = storeToRefs(gamePlayStore)
 
@@ -53,30 +54,34 @@ export const useUserStore = defineStore('userStore', () => {
 
   const signInWithGoogle = async() => {
     await auth0.loginWithPopup();
-    const auth=await auth0.isAuthenticated();
     const token2=await auth0.getIdTokenClaims();
-    console.log(token2);
-
-    const token=await auth0.getTokenSilently();
-    console.log(token);
     const user =await auth0.getUser();
+    localStorage.setItem('auth:token',token2?.__raw??'')
+    localStorage.setItem('auth:user',JSON.stringify(user))
     console.log(user)
     asyncSetUser();
-
   }
 
   async function asyncSetUser() {
     try {
-      const auth=await auth0.isAuthenticated();
-      const user =await auth0.getUser();
-      const userDetails: any = user;
+      let userDetails:any;
+      try{
+        const user =await auth0.getUser();
+        userDetails = user;
+      }catch(error1){
+        const localUser=localStorage.getItem('auth:user')
+        if(!userDetails && localUser && localUser!=''){
+          userDetails = JSON.parse(localUser) as User;
+        }
+      }
+
       if (userDetails && userDetails.name) {
-        const variables: UserSearchFilterInput = {
+        const filter: UserSearchFilterInput = {
           email: {
             eq: userDetails.email
           }
         };
-        const { onResult, onError } = useQuery(userExistsQuery, { filter: variables });
+        const { onResult, onError } = useQuery(userExistsQuery, { filter: filter });
         onResult((results: IApolloResult) => {
           if (results.loading) return
           const userResponse = results.data.userSearch as UserSearchConnection;
@@ -132,6 +137,8 @@ export const useUserStore = defineStore('userStore', () => {
 
   const signOut = async() => {
     try {
+      localStorage.setItem('auth:token','')
+      localStorage.setItem('auth:user','')
       participantDetails.value = {
         id: '',
         user: {
@@ -155,3 +162,4 @@ export const useUserStore = defineStore('userStore', () => {
 
   return { userInfo, setUserDetails, signInWithGoogle, asyncSetUser, signOut }
 })
+

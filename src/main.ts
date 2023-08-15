@@ -12,14 +12,10 @@ import PusherPlugin from '@/utils/pusherConfig'
 
 import {createAuth0Client} from "@auth0/auth0-spa-js";
 
-const app = createApp({
-    setup() {
-        provide(DefaultApolloClient, apolloClient)//,
-    },
-    render: () => h(App),
-})
+const app = createApp(App);
 app.use(PusherPlugin);
 app.use(createPinia())
 app.use(router)
+app.provide(DefaultApolloClient, apolloClient)
 app.use(autoAnimatePlugin)
 app.mount('#app')

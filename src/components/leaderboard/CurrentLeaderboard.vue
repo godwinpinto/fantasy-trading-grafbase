@@ -87,6 +87,8 @@ watch(contestId, (newContestId, oldContestId) => {
 
 const getCurrentLeaderboard = async (contestId: string) => {
   try {
+
+
     const variables: ParticipantSearchFilterInput = {
       contestId: {
         eq: contestId

@@ -11,8 +11,9 @@ const isAuthSetTried = ref(false);
 const { asyncSetUser } = useUserStore();
 
 onBeforeMount(() => {
-  
-      isAuthSetTried.value = true;
+  asyncSetUser().then(()=>{
+    isAuthSetTried.value = true;
+  })
 });
 </script>
 <template>

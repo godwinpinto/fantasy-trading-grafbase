@@ -77,7 +77,7 @@ const getContestMessages = async (contestId: string) => {
                 eq: contestId
             }
         };
-        const { onResult, onError } = useQuery(getMessagesByContestIdQuery, { filter: variables, pollInterval: 5000 });
+        const { onResult, onError } = useQuery(getMessagesByContestIdQuery, { filter: variables });
         onResult((results: IApolloResult) => {
             if (results.loading) return
             const messageResponse = results.data.messageSearch as MessageSearchConnection;

@@ -12,7 +12,7 @@ const { signInWithGoogle, signOut } = useUserStore();
 <template>
   <div class="navbar bg-base-300">
     <div class="flex-1">
-      <div class="w-36 rounded-full">
+      <div class="w-48 rounded-full">
         <img src="@/assets/app-logo.png">
       </div>
     </div>

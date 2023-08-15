@@ -5,7 +5,7 @@ import type { ApolloError } from '@apollo/client/errors';
 import type { IApolloResult } from '@/utils/commonInterfaces';
 import { updateContestMutation, createContestStockMutation, createContestStockFeedMutation, updateContestStockFeedMutation, createContestMutation } from '@/graphql/mutations';
 import { apolloClient } from '@/utils/apolloLink'
-import type { ContestStockFeed,IntOperationsInput,ContestByInput, ContestUpdateInput, Contest, ContestStockCreateInput, ContestStockFeedSearchFilterInput, ContestStockFeedSearchConnection, ContestStockFeedUpdateInput, ContestStockFeedByInput, ContestCreateInput, ContestSearchConnection, ContestSearchFilterInput, FloatOperationsInput, Participant, ParticipantCreateInput, ParticipantCreatePayload, ParticipantUpdateInput, UserCreateInput, UserCreatePayload, UserSearchConnection, UserSearchFilterInput } from '@/graphql/schemaTypes';
+import type { ContestStockFeed,ContestByInput, ContestUpdateInput, Contest, ContestStockCreateInput, ContestStockFeedSearchFilterInput, ContestStockFeedSearchConnection, ContestStockFeedUpdateInput, ContestStockFeedByInput, ContestCreateInput, ContestSearchConnection, ContestSearchFilterInput } from '@/graphql/schemaTypes';
 import { activeContestQuery, getContestStockFeedByContestIdQuery } from '@/graphql/queries';
 import { sendMessageAPI } from '@/utils/sendMessageAPI';
 
@@ -78,7 +78,7 @@ setInterval(() => {
     updateFeedData(JSON.stringify(stockDataObject), contestIdOverall.value, feedId.value);
   }
 
-}, 10000);
+}, 5000);
 
 const addStocks = async (stockCode: string, stockDescription: string, stockImage: string, stockPrice: number, contestId: string) => {
   try {

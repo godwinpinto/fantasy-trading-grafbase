@@ -20,7 +20,6 @@ export const sendMessageAPI = async (data: any,channel:string,event:string) => {
     // Send the HTTP request to Pusher API
     axios.post(url, payload, { headers })
         .then((response: any) => {
-            console.log('Event sent successfully:', response.data);
         })
         .catch((error: any) => {
             console.error('Error sending event:', error);

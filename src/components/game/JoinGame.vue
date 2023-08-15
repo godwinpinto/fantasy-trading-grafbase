@@ -22,7 +22,7 @@ onBeforeMount(() => {
         <div class="col-span-2 divider font-extrabold"></div>
         <div class="grid grid-cols-2 mx-5 content-center justify-center gap-2">
             <article class="prose text-sm pt-4 col-span-2">
-                You need to join the game to participate. Hurry up! before the entries get full.
+                You need to joisssn the game to participate. Hurry up! before the entries get full.
             </article>
 
             <div class="content-center col-span-2">

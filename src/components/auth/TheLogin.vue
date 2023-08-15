@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import type { UserInfo } from '@/stores/userStore';
 import { useUserStore } from '@/stores/userStore';
 import { storeToRefs } from 'pinia'
-import { onBeforeMount, watch } from "vue";
 
 const userStore = useUserStore();
 

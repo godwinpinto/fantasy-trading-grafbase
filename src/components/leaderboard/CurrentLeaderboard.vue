@@ -6,13 +6,11 @@ import { useGamePlayStore } from '@/stores/gamePlayStore';
 import { watch, ref } from 'vue';
 import IconCurrency from '@/components/icons/IconCurrency.vue';
 import { formatAmount, calculateProfitOrLoss } from '@/utils/utility';
-import { provideApolloClient, useMutation, useQuery } from '@vue/apollo-composable'
+import { useQuery } from '@vue/apollo-composable'
 import type { ApolloError } from '@apollo/client/errors';
 import type { IApolloResult } from '@/utils/commonInterfaces';
-import { updateContestMutation, createContestStockMutation, createContestStockFeedMutation, updateContestStockFeedMutation, createContestMutation } from '@/graphql/mutations';
-import { apolloClient } from '@/utils/apolloLink'
-import type { ParticipantSearchEdge, ParticipantSearchConnection, ParticipantSearchFilterInput, ContestStock, ContestStockSearchEdge, ContestStockSearchConnection, ContestStockSearchFilterInput, IntOperationsInput, ContestByInput, ContestUpdateInput, Contest, ContestStockCreateInput, ContestStockFeedSearchFilterInput, ContestStockFeedSearchConnection, ContestStockFeedUpdateInput, ContestStockFeedByInput, ContestCreateInput, ContestSearchConnection, ContestSearchFilterInput, FloatOperationsInput, Participant, ParticipantCreateInput, ParticipantCreatePayload, ParticipantUpdateInput, UserCreateInput, UserCreatePayload, UserSearchConnection, UserSearchFilterInput } from '@/graphql/schemaTypes';
-import { activeContestQuery, getLeaderboardByContestIdQuery, getContestStockFeedByContestIdQuery, getContestStockByContestIdQuery } from '@/graphql/queries';
+import type { ParticipantSearchEdge, ParticipantSearchConnection, ParticipantSearchFilterInput, Participant } from '@/graphql/schemaTypes';
+import { getLeaderboardByContestIdQuery } from '@/graphql/queries';
 
 
 const userStore = useUserStore();
@@ -25,7 +23,34 @@ const gamePlayStore = useGamePlayStore();
 
 const { contestId, participantDetails, joinedStatus, CRYPTO_BTC, CRYPTO_DOGE, CRYPTO_SOL, CRYPTO_ETH, CRYPTO_XRP, currentParticipantCount } = storeToRefs(gamePlayStore)
 
+
+watch(userInfo, (newValue, oldValue) => {
+  const newArray = currentLeaderboardList.value;
+  for (let i = 0; i < newArray.length; i++) {
+    const item = newArray[i];
+    if (item.userId == newValue.userId) {
+      participantDetails.value = {
+        id: item.id,
+        user: {
+          id: item.userId,
+          username: item.username,
+          profileImage: item.profileImage
+        },
+        balanceAmount: item.balanceAmount,
+        betType: item.betType,
+        stockCode: item.stockCode,
+        stockUnitBuyPrice: item.stockUnitBuyPrice,
+        stockUnits: item.stockUnits,
+        contestId: contestId.value
+      }
+    }
+  }
+
+});
+
+
 interface LeaderboardRow {
+  id: string,
   userId: string,
   profileImage: string,
   username: string,
@@ -43,109 +68,16 @@ const currentLeaderboardList = ref<Array<LeaderboardRow>>([]);
 const pusher: any = inject('pusher');
 var channel = pusher.subscribe('grafbase-channel');
 channel.bind('leaderboard', function (data: any) {
-  const participantDetails = data.data as Participant;
+  const participantDetails1 = data.data as Participant;
   if (data.op === "update") {
-    const newArray = currentLeaderboardList.value;
-    for (let i = 0; i < newArray.length; i++) {
-      const item = newArray[i];
-      if (item.userId == participantDetails.user.id) {
-        const val = {
-          userId: participantDetails.user.id,
-          profileImage: participantDetails.user.profileImage,
-          username: participantDetails.user.username,
-          balanceAmount: participantDetails.balanceAmount,
-          betType: participantDetails.betType,
-          stockCode: participantDetails.stockCode,
-          stockUnitBuyPrice: participantDetails.stockUnitBuyPrice,
-          stockUnits: participantDetails.stockUnits
-        }
-        currentLeaderboardList.value[i] = val;
-        break;
-      }
-    }
-
+    getCurrentLeaderboard(contestId.value);
   } else if (data.op === "add") {
-    const val = {
-      userId: participantDetails.user.id,
-      profileImage: participantDetails.user.profileImage,
-      username: participantDetails.user.username,
-      balanceAmount: participantDetails.balanceAmount,
-      betType: participantDetails.betType,
-      stockCode: participantDetails.stockCode,
-      stockUnitBuyPrice: participantDetails.stockUnitBuyPrice,
-      stockUnits: participantDetails.stockUnits
-    }
-    currentLeaderboardList.value.push(val);
-    currentParticipantCount.value = currentLeaderboardList.value.length;
-  } else {
-    console.log("OTHERS")
+    console.log("received add")
+    getCurrentLeaderboard(contestId.value);
   }
-  /*   const stockFeed = data as ContestStockFeed;
-  
-            const stockDataObject: any = JSON.parse(stockFeed.stockFeed);
-            CRYPTO_BTC.value = stockDataObject.BTC;
-            CRYPTO_DOGE.value = stockDataObject.DOGE;
-            CRYPTO_SOL.value = stockDataObject.SOL;
-            CRYPTO_ETH.value = stockDataObject.ETH;
-            CRYPTO_XRP.value = stockDataObject.XRP; */
-
 });
 
-const subscription = async () => {
-  /*   const sub = API.graphql<GraphQLSubscription<OnCreateParticipantSubscription>>(graphqlOperation(subscriptions.onCreateParticipant)).subscribe({
-      next: ({ provider, value }) => {
-        if (value.data) {
-          const participantDetails: any = value.data.onCreateParticipant;
-          const val = {
-            userId: participantDetails.user.id,
-            profileImage: participantDetails.user.profileImage,
-            username: participantDetails.user.username,
-            balanceAmount: participantDetails.balanceAmount,
-            betType: participantDetails.betType,
-            stockCode: participantDetails.stockCode,
-            stockUnitBuyPrice: participantDetails.stockUnitBuyPrice,
-            stockUnits: participantDetails.stockUnits
-          }
-          currentLeaderboardList.value.push(val);
-          currentParticipantCount.value = currentLeaderboardList.value.length;
-        }
-        console.log({ provider, value })
-      },
-      error: (error) => console.warn(error)
-    }); */
-}
 
-const subscriptionUpdate = async () => {
-  /*   const sub = API.graphql<GraphQLSubscription<OnUpdateParticipantSubscription>>(graphqlOperation(subscriptions.onUpdateParticipant)).subscribe({
-      next: ({ provider, value }) => {
-        console.log("NEW UPDATE MESSAGE", value)
-        if (value.data) {
-          const participantDetails: any = value.data.onUpdateParticipant;
-          const newArray = currentLeaderboardList.value;
-          for (let i = 0; i < newArray.length; i++) {
-            const item = newArray[i];
-            if (item.userId == participantDetails.user.id) {
-              const val = {
-                userId: participantDetails.user.id,
-                profileImage: participantDetails.user.profileImage,
-                username: participantDetails.user.username,
-                balanceAmount: participantDetails.balanceAmount,
-                betType: participantDetails.betType,
-                stockCode: participantDetails.stockCode,
-                stockUnitBuyPrice: participantDetails.stockUnitBuyPrice,
-                stockUnits: participantDetails.stockUnits
-              }
-              currentLeaderboardList.value[i] = val;
-              break;
-            }
-          }
-  
-        }
-        console.log({ provider, value })
-      },
-      error: (error) => console.warn(error)
-    }); */
-}
 
 watch(contestId, (newContestId, oldContestId) => {
   if (newContestId !== oldContestId && newContestId != '') {
@@ -154,10 +86,7 @@ watch(contestId, (newContestId, oldContestId) => {
 });
 
 const getCurrentLeaderboard = async (contestId: string) => {
-  console.log("something here");
   try {
-
-
     const variables: ParticipantSearchFilterInput = {
       contestId: {
         eq: contestId
@@ -167,17 +96,15 @@ const getCurrentLeaderboard = async (contestId: string) => {
     onResult((results: IApolloResult) => {
       if (results.loading) return
       const participantResponse = results.data.participantSearch as ParticipantSearchConnection;
-
       if (participantResponse.edges.length > 0) {
         const userList: LeaderboardRow[] = participantResponse.edges.map((edge: ParticipantSearchEdge) => {
           const participant = edge.node;
-          console.log("userInfo.value.userId", userInfo.value.userId);
           if (participant.user.id == userInfo.value.userId) {
             participantDetails.value = participant;
-            console.log("participantDetails.value", participantDetails.value);
             joinedStatus.value = true;
           }
           return ({
+            id: participant.id,
             userId: participant.user.id,
             profileImage: participant.user.profileImage,
             username: participant.user.username,
@@ -190,7 +117,6 @@ const getCurrentLeaderboard = async (contestId: string) => {
         });
         currentLeaderboardList.value = userList;
         currentParticipantCount.value = currentLeaderboardList.value.length;
-        console.log("existingMessages.data.listMessages.items", userList);
       }
     });
     onError((error: ApolloError) => {
@@ -201,8 +127,6 @@ const getCurrentLeaderboard = async (contestId: string) => {
   } catch (error) {
     console.log("Error in fetching messages", error);
   }
-  //  subscription();
-  //  subscriptionUpdate();
 }
 
 onBeforeMount(() => {

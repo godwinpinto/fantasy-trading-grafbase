@@ -87,7 +87,6 @@ const getCurrentStocks = async (contestId: string) => {
           })
         });
         currentStocksList.value = stockList;
-        console.log("existingStocks.data.listContestStocks.items", stockList);
       }
     });
     onError((error: ApolloError) => {
@@ -141,9 +140,6 @@ onBeforeMount(() => {
   }
 });
 
-watch(participantDetails.value, (newValue, oldValue) => {
-  console.log("participants updated", newValue, oldValue)
-});
 </script>
 <template>
   <div class="navbar bg-base-300">

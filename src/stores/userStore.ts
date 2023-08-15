@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue'
+import { ref, computed, inject } from 'vue'
 import { defineStore } from 'pinia'
 import { useGamePlayStore } from '@/stores/gamePlayStore';
 import { storeToRefs } from 'pinia'
@@ -9,7 +9,7 @@ import type { ApolloError } from '@apollo/client/errors';
 import type { IApolloResult } from '@/utils/commonInterfaces';
 import { createNewUser } from '@/graphql/mutations';
 import { apolloClient } from '@/utils/apolloLink'
-import { useAuth0 } from '@auth0/auth0-vue';
+import {Auth0Client, createAuth0Client} from "@auth0/auth0-spa-js";
 
 export interface UserInfo {
   username: string
@@ -21,44 +21,56 @@ export interface UserInfo {
 
 export const useUserStore = defineStore('userStore', () => {
 
-  const newApolloClient = provideApolloClient(apolloClient);
+  provideApolloClient(apolloClient);
 
   const userInfo = ref<UserInfo>({
     username: '',
     userId: '',
     email: '',
     profileImage: ''
-  })
-
-
-/*   const authInfo = {
-    attributes: {
-      name: "godwin",
-      email: "godwin.pinto86@gmail.com",
-      picture: ""
+  });
+  const auth0Config = {
+    domain: import.meta.env.VITE_AUTH0_DOMAIN,
+    clientId: import.meta.env.VITE_AUTH0_CLIENT_ID,
+    authorizationParams: {
+      redirect_uri: window.location.origin
     }
-  } */
+  };
 
+  let auth0:Auth0Client;
+  createAuth0Client(auth0Config).then((client)=>
+  {
+    auth0=client;
+  });
+  
+  
   const gamePlayStore = useGamePlayStore();
-  const { loginWithPopup,logout} = useAuth0();
   const { participantDetails } = storeToRefs(gamePlayStore)
 
   const setUserDetails = (userInfoVal: UserInfo) => {
     userInfo.value = userInfoVal
   }
 
-  const signInWithGoogle = () => {
-    console.log("signin");
-    loginWithPopup();
+  const signInWithGoogle = async() => {
+    await auth0.loginWithPopup();
+    const auth=await auth0.isAuthenticated();
+    const token2=await auth0.getIdTokenClaims();
+    console.log(token2);
+
+    const token=await auth0.getTokenSilently();
+    console.log(token);
+    const user =await auth0.getUser();
+    console.log(user)
+    asyncSetUser();
+
   }
 
-  async function asyncSetUser(user:any) {
+  async function asyncSetUser() {
     try {
-        console.log("usersssss",user);
+      const auth=await auth0.isAuthenticated();
+      const user =await auth0.getUser();
       const userDetails: any = user;
       if (userDetails && userDetails.name) {
-        console.log("user", userDetails);
-
         const variables: UserSearchFilterInput = {
           email: {
             eq: userDetails.email
@@ -97,11 +109,9 @@ export const useUserStore = defineStore('userStore', () => {
                 email: userDetails.email,
                 profileImage: userDetails.picture
               }
-
-              console.log("create user success", results);
             });
             onCreateUserError((error: ApolloError) => {
-              console.log("error create error", error);
+              console.log("error create user", error);
             });
             createUserMutate();
           }
@@ -136,7 +146,7 @@ export const useUserStore = defineStore('userStore', () => {
         stockUnits: 0,
         contestId: ''
       }
-      await logout({logoutParams:{localOnly: true}})
+      await auth0.logout({logoutParams:{localOnly: true,returnTo:window.location.toString()}})
 
     } catch (error) {
       console.log("Something went wrong in signout", error);

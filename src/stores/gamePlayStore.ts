@@ -4,7 +4,7 @@ import { calculateProfitOrLoss, formatAmount } from '@/utils/utility';
 import { provideApolloClient, useMutation, useQuery } from '@vue/apollo-composable'
 import type { ApolloError } from '@apollo/client/errors';
 import type { IApolloResult } from '@/utils/commonInterfaces';
-import { createNewUser, createParticipantMutation, updateParticipantMutation } from '@/graphql/mutations';
+import { createParticipantMutation, updateParticipantMutation } from '@/graphql/mutations';
 import { apolloClient } from '@/utils/apolloLink'
 import type { ContestSearchConnection, ContestSearchFilterInput, FloatOperationsInput, Participant, ParticipantByInput, ParticipantCreateInput, ParticipantCreatePayload, ParticipantUpdateInput, UserCreateInput, UserCreatePayload, UserSearchConnection, UserSearchFilterInput } from '@/graphql/schemaTypes';
 import { activeContestQuery, userExistsQuery } from '@/graphql/queries';
@@ -27,7 +27,7 @@ export interface IParticipant {
 
 export const useGamePlayStore = defineStore('gamePlayStore', () => {
 
-    const newApolloClient = provideApolloClient(apolloClient);
+    provideApolloClient(apolloClient);
 
     const contestId = ref('')
     const joinedStatus = ref(false)
@@ -107,7 +107,6 @@ export const useGamePlayStore = defineStore('gamePlayStore', () => {
                 if (participant) {
                     participantDetails.value = participant
                 }
-                console.log("participant joined successfully", results);
             });
             onCreateParticipantError((error: ApolloError) => {
                 console.log("error create error", error);
@@ -121,8 +120,6 @@ export const useGamePlayStore = defineStore('gamePlayStore', () => {
     }
 
     const investOrWithdraw = async (action: string, stockCode: string, betType: string) => {
-
-        console.log("CRYPTO_BTC.value", CRYPTO_BTC.value);
 
 
         try {
@@ -170,11 +167,10 @@ export const useGamePlayStore = defineStore('gamePlayStore', () => {
                 },
                 betType: betType,
             };
-
+            
             const byId: ParticipantByInput = {
                 id:currVal.id
             }
-
 
             const { mutate: updateParticipantMutate, onDone: onUpdateParticipantResult, onError: onUpdateParticipantError } = useMutation(updateParticipantMutation, { variables: { input: updatedObject,by:byId } })
             onUpdateParticipantResult((results: any) => {
@@ -183,7 +179,7 @@ export const useGamePlayStore = defineStore('gamePlayStore', () => {
                 if (participant) {
                     participantDetails.value = participant
                 }
-                console.log("participant joined successfully", results);
+                console.log("participant details updated", results);
             });
             onUpdateParticipantError((error: ApolloError) => {
                 console.log("error Update error", error);
@@ -191,13 +187,12 @@ export const useGamePlayStore = defineStore('gamePlayStore', () => {
             updateParticipantMutate();
 
         } catch (error) {
-            console.log("cannot contest stock", error);
+            console.log("error in onvest or withdraw", error);
         }
     }
 
     const calculateInvestedAmount = computed(() => {
         try {
-            console.log("someeee", participantDetails.value.stockUnitBuyPrice, participantDetails.value.stockUnits)
             const currVal = participantDetails.value;
             let balanceAmount = 0;
 

@@ -3,17 +3,13 @@ import { useUserStore } from '@/stores/userStore';
 import { storeToRefs } from 'pinia'
 import { useGamePlayStore } from '@/stores/gamePlayStore';
 import { watch, ref, inject } from 'vue';
-import { provideApolloClient, useMutation, useQuery } from '@vue/apollo-composable'
+import { useMutation, useQuery } from '@vue/apollo-composable'
 import type { ApolloError } from '@apollo/client/errors';
 import type { IApolloResult } from '@/utils/commonInterfaces';
-import { createMessageMutation, updateContestMutation, createContestStockMutation, createContestStockFeedMutation, updateContestStockFeedMutation, createContestMutation } from '@/graphql/mutations';
-import { apolloClient } from '@/utils/apolloLink'
-import type { MessageCollectionFilterInput, MessageCreateInput, Message, MessageSearchEdge, MessageSearchConnection, MessageSearchFilterInput, ParticipantSearchEdge, ParticipantSearchConnection, ParticipantSearchFilterInput, ContestStock, ContestStockSearchEdge, ContestStockSearchConnection, ContestStockSearchFilterInput, IntOperationsInput, ContestByInput, ContestUpdateInput, Contest, ContestStockCreateInput, ContestStockFeedSearchFilterInput, ContestStockFeedSearchConnection, ContestStockFeedUpdateInput, ContestStockFeedByInput, ContestCreateInput, ContestSearchConnection, ContestSearchFilterInput, FloatOperationsInput, Participant, ParticipantCreateInput, ParticipantCreatePayload, ParticipantUpdateInput, UserCreateInput, UserCreatePayload, UserSearchConnection, UserSearchFilterInput } from '@/graphql/schemaTypes';
-import { getNewMessageQuery, getMessagesByContestIdQuery, activeContestQuery, getLeaderboardByContestIdQuery, getContestStockFeedByContestIdQuery, getContestStockByContestIdQuery } from '@/graphql/queries';
-import { subscribeToLiveQueries } from '@/utils/liveQueriesUtility';
-import Pusher from 'pusher-js';
-import axios from 'axios';
-import {sendMessageAPI} from '@/utils/sendMessageAPI'
+import { createMessageMutation } from '@/graphql/mutations';
+import type { MessageCreateInput, Message, MessageSearchEdge, MessageSearchConnection, MessageSearchFilterInput } from '@/graphql/schemaTypes';
+import { getMessagesByContestIdQuery } from '@/graphql/queries';
+import { sendMessageAPI } from '@/utils/sendMessageAPI'
 
 const userStore = useUserStore();
 const scrollChat = ref<HTMLElement | null>(null);
@@ -42,13 +38,11 @@ const messages = ref<Array<message>>([]);
 const scrollChatToBottom = () => {
     setTimeout(() => {
         if (scrollChat.value) {
-            console.log("scroll");
             const element = scrollChat.value.lastElementChild;
             if (element) {
                 element.scrollIntoView({ behavior: 'smooth', block: 'end' })
 
             } else {
-                console.log("not scroll");
             }
         }
     }, 500);
@@ -62,12 +56,11 @@ watch(contestId, (newContestId, oldContestId) => {
     }
 });
 
-Pusher.logToConsole = true;
+//Pusher.logToConsole = true;
 
 const pusher: any = inject('pusher');
 var channel = pusher.subscribe('grafbase-channel');
 channel.bind('new-message', function (data: any) {
-    console.log("datadatadatadata", data);
     const messageRecord = data.message as Message;
     const val = {
         message: messageRecord.body ?? '',
@@ -87,7 +80,6 @@ watch(contestId, (newContestId, oldContestId) => {
 });
 
 const getContestMessages = async (contestId: string) => {
-    console.log("calling message Api")
     try {
         const variables: MessageSearchFilterInput = {
             contestId: {
@@ -96,7 +88,6 @@ const getContestMessages = async (contestId: string) => {
         };
         const { onResult, onError } = useQuery(getMessagesByContestIdQuery, { filter: variables, pollInterval: 5000 });
         onResult((results: IApolloResult) => {
-            console.log("hi");
             if (results.loading) return
             const messageResponse = results.data.messageSearch as MessageSearchConnection;
 
@@ -133,14 +124,12 @@ const getContestMessages = async (contestId: string) => {
     } catch (error) {
         console.log("Error in fetching messages", error);
     }
-    // subscription();
 }
 
 
 
 const sendMessage = async () => {
     const messageContent = newMessage.value;
-    console.log("called sendMessage", messageContent);
     if (messageContent == "")
         return
     const currentUTCDate = new Date().toISOString();
@@ -161,10 +150,8 @@ const sendMessage = async () => {
 
         const { mutate: createMessageMutate, onDone: onCreateMessageResult, onError: onCreateMessageError } = useMutation(createMessageMutation, { variables: { input: variables } })
         onCreateMessageResult((results: any) => {
-            console.log("Message sent successfully", results);
             const messageResponse = results.data.messageCreate as Message;
-
-            sendMessageAPI(messageResponse,"grafbase-channel","new-message");
+            sendMessageAPI(messageResponse, "grafbase-channel", "new-message");
         });
         onCreateMessageError((error: ApolloError) => {
             console.log("error create error", error);
@@ -193,7 +180,6 @@ if (contestId.value != '') {
                 :class="userInfo.userId == message.user.id ? 'chat-end' : 'chat-start'">
                 <div class="chat-header">
                     {{ message.user.username }}
-                    <!-- <time class="text-xs opacity-50">2 hours ago</time> -->
                 </div>
                 <div class="chat-bubble">{{ message.message }}</div>
             </div>

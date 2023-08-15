@@ -1,7 +1,5 @@
 import gql from 'graphql-tag'
 
-
-
 export const userExistsQuery = gql`
 query userSearch($filter: UserSearchFilterInput){
     userSearch(filter: $filter, first: 1){
@@ -18,7 +16,6 @@ query userSearch($filter: UserSearchFilterInput){
     }
 }
 `;
-
 
 export const activeContestQuery = gql`
 query contestSearch($filter: ContestSearchFilterInput){
@@ -50,7 +47,6 @@ query contestStockFeedSearch($filter: ContestStockFeedSearchFilterInput){
 }
 `;
 
-
 export const getContestStockByContestIdQuery = gql`
 query contestStockSearch($filter: ContestStockSearchFilterInput){
     contestStockSearch(filter:$filter,first:10){
@@ -67,7 +63,6 @@ query contestStockSearch($filter: ContestStockSearchFilterInput){
   }
 }
 `;
-
 
 export const getLeaderboardByContestIdQuery = gql`
 query participantSearch($filter: ParticipantSearchFilterInput){
@@ -91,10 +86,9 @@ query participantSearch($filter: ParticipantSearchFilterInput){
 }
 `;
 
-
 export const getMessagesByContestIdQuery = gql`
 query messageSearch($filter: MessageSearchFilterInput){
-    messageSearch(filter:$filter,first:30){
+    messageSearch(filter:$filter,first:100){
       edges{
         node{
             body
@@ -110,9 +104,7 @@ query messageSearch($filter: MessageSearchFilterInput){
 }
 `;
 
-
-
-export const getNewMessageQuery = `
+export const getNewMessageQuery = gql`
 query messageCollection($filter: MessageCollectionFilterInput) @live {
     messageCollection(filter:$filter,first:1){
       edges{

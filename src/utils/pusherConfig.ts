@@ -5,7 +5,7 @@ const pusher = new Pusher(import.meta.env.VITE_PUSHER_APP_KEY, {
 });
 
 export default {
-  install: (app:any) => {
+  install: (app: any) => {
     app.config.globalProperties.$pusher = pusher;
     app.provide('pusher', pusher);
   }

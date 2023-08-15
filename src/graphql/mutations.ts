@@ -15,7 +15,6 @@ mutation userCreate($input: UserCreateInput!){
 }
 `;
 
-
 export const createParticipantMutation = gql`
 mutation participantCreate($input: ParticipantCreateInput!){
     participantCreate(input: $input){
@@ -39,7 +38,6 @@ mutation participantCreate($input: ParticipantCreateInput!){
 }
 `;
 
-
 export const updateParticipantMutation = gql`
 mutation participantUpdate($input: ParticipantUpdateInput!,$by: ParticipantByInput!){
     participantUpdate(input: $input, by: $by){
@@ -61,9 +59,7 @@ mutation participantUpdate($input: ParticipantUpdateInput!,$by: ParticipantByInp
         }
     }
 }
-
 `;
-
 
 export const createContestStockMutation = gql`
 mutation contestStockCreate($input: ContestStockCreateInput!){
@@ -85,7 +81,6 @@ mutation contestStockFeedCreate($input: ContestStockFeedCreateInput!){
 }
 `;
 
-
 export const updateContestStockFeedMutation = gql`
 mutation contestStockFeedUpdate($input: ContestStockFeedUpdateInput!,$by: ContestStockFeedByInput!){
     contestStockFeedUpdate(input: $input, by: $by){
@@ -97,7 +92,6 @@ mutation contestStockFeedUpdate($input: ContestStockFeedUpdateInput!,$by: Contes
 }
 
 `;
-
 
 export const createContestMutation = gql`
 mutation contestCreate($input: ContestCreateInput!){
@@ -114,8 +108,6 @@ mutation contestCreate($input: ContestCreateInput!){
 }
 `;
 
-
-
 export const updateContestMutation = gql`
 mutation contestUpdate($input: ContestUpdateInput!,$by: ContestByInput!){
     contestUpdate(input: $input, by: $by){
@@ -124,9 +116,7 @@ mutation contestUpdate($input: ContestUpdateInput!,$by: ContestByInput!){
         }
     }
 }
-
 `;
-
 
 export const createMessageMutation = gql`
 mutation messageCreate($input: MessageCreateInput!){

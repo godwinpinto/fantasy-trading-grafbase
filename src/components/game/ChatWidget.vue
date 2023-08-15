@@ -2,7 +2,7 @@
 import { useUserStore } from '@/stores/userStore';
 import { storeToRefs } from 'pinia'
 import { useGamePlayStore } from '@/stores/gamePlayStore';
-import { watch, ref, inject } from 'vue';
+import { watch, ref, inject, onBeforeMount } from 'vue';
 import { useMutation, useQuery } from '@vue/apollo-composable'
 import type { ApolloError } from '@apollo/client/errors';
 import type { IApolloResult } from '@/utils/commonInterfaces';
@@ -13,12 +13,13 @@ import { sendMessageAPI } from '@/utils/sendMessageAPI'
 
 const userStore = useUserStore();
 const scrollChat = ref<HTMLElement | null>(null);
-
 const { userInfo } = storeToRefs(userStore)
-
 const gamePlayStore = useGamePlayStore();
-
 const { contestId } = storeToRefs(gamePlayStore)
+const newMessage = ref('');
+const messages = ref<Array<message>>([]);
+const pusher: any = inject('pusher');
+var channel = pusher.subscribe('grafbase-channel');
 
 interface user {
     id: string,
@@ -29,11 +30,8 @@ interface message {
     message: string,
     user: user,
     createdAt: string
+    msgDateTime: Date
 }
-
-const newMessage = ref('');
-
-const messages = ref<Array<message>>([]);
 
 const scrollChatToBottom = () => {
     setTimeout(() => {
@@ -48,30 +46,23 @@ const scrollChatToBottom = () => {
     }, 500);
 }
 
-
-
 watch(contestId, (newContestId, oldContestId) => {
     if (newContestId !== oldContestId && newContestId != '') {
         getContestMessages(newContestId);
     }
 });
 
-//Pusher.logToConsole = true;
-
-const pusher: any = inject('pusher');
-var channel = pusher.subscribe('grafbase-channel');
 channel.bind('new-message', function (data: any) {
     const messageRecord = data.message as Message;
     const val = {
         message: messageRecord.body ?? '',
         user: messageRecord?.user ?? { id: '', username: '' },
-        createdAt: messageRecord?.createdAt ?? ''
+        createdAt: messageRecord?.createdAt ?? '',
+        msgDateTime: messageRecord.msgDateTime
     }
     messages.value.push(val);
     scrollChatToBottom();
 });
-
-
 
 watch(contestId, (newContestId, oldContestId) => {
     if (newContestId !== oldContestId && newContestId != '') {
@@ -90,14 +81,10 @@ const getContestMessages = async (contestId: string) => {
         onResult((results: IApolloResult) => {
             if (results.loading) return
             const messageResponse = results.data.messageSearch as MessageSearchConnection;
-
             if (messageResponse.edges.length > 0) {
-
-
                 const arrayMessages = messageResponse.edges;
                 const newMessages: Array<any> = [];
                 arrayMessages.forEach((edge: MessageSearchEdge) => {
-
                     const messagess = edge.node
                     const userr = messagess.user;
                     const newMessage: message = {
@@ -106,11 +93,12 @@ const getContestMessages = async (contestId: string) => {
                             "id": messagess.user.id,
                             "username": messagess.user.username,
                         },
-                        createdAt: messagess.createdAt
+                        createdAt: messagess.createdAt,
+                        msgDateTime: messagess.msgDateTime
                     }
                     newMessages.push(newMessage);
-
                 });
+                newMessages.sort((a: any, b: any) => new Date(a.msgDateTime).getTime() - new Date(b.msgDateTime).getTime());
                 messages.value = newMessages;
                 scrollChatToBottom();
             }
@@ -119,14 +107,10 @@ const getContestMessages = async (contestId: string) => {
             console.log("error", error);
             return null
         })
-
-
     } catch (error) {
         console.log("Error in fetching messages", error);
     }
 }
-
-
 
 const sendMessage = async () => {
     const messageContent = newMessage.value;
@@ -146,8 +130,6 @@ const sendMessage = async () => {
                 link: contestId.value
             }
         };
-
-
         const { mutate: createMessageMutate, onDone: onCreateMessageResult, onError: onCreateMessageError } = useMutation(createMessageMutation, { variables: { input: variables } })
         onCreateMessageResult((results: any) => {
             const messageResponse = results.data.messageCreate as Message;
@@ -162,12 +144,12 @@ const sendMessage = async () => {
         console.log("cannot send new message", error);
     }
 }
-
-if (contestId.value != '') {
-    getContestMessages(contestId.value);
-}
+onBeforeMount(() => {
+    if (contestId.value != '') {
+        getContestMessages(contestId.value);
+    }
+})
 </script>
-
 <template>
     <div class="navbar bg-base-300 mb-0 pb-0">
         <span class="normal-case text-xl font-bold">Gameplay Chat</span>
@@ -175,7 +157,7 @@ if (contestId.value != '') {
     <div class="divider my-0"></div>
 
     <div class=" flex flex-col">
-        <div class="flex-col overflow-y-scroll flex mb-7" style="height:39rem" ref="scrollChat">
+        <div class="flex-col overflow-y-scroll flex mb-7" style="height:70vh; max-height: 70vh;" ref="scrollChat">
             <div v-for="message in messages" class="chat"
                 :class="userInfo.userId == message.user.id ? 'chat-end' : 'chat-start'">
                 <div class="chat-header">

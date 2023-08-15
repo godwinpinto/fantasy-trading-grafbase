@@ -5,14 +5,20 @@ import type { ApolloError } from '@apollo/client/errors';
 import type { IApolloResult } from '@/utils/commonInterfaces';
 import { updateContestMutation, createContestStockMutation, createContestStockFeedMutation, updateContestStockFeedMutation, createContestMutation } from '@/graphql/mutations';
 import { apolloClient } from '@/utils/apolloLink'
-import type { ContestStockFeed,ContestByInput, ContestUpdateInput, Contest, ContestStockCreateInput, ContestStockFeedSearchFilterInput, ContestStockFeedSearchConnection, ContestStockFeedUpdateInput, ContestStockFeedByInput, ContestCreateInput, ContestSearchConnection, ContestSearchFilterInput } from '@/graphql/schemaTypes';
+import type { ContestStockFeed, ContestByInput, ContestUpdateInput, Contest, ContestStockCreateInput, ContestStockFeedSearchFilterInput, ContestStockFeedSearchConnection, ContestStockFeedUpdateInput, ContestStockFeedByInput, ContestCreateInput, ContestSearchConnection, ContestSearchFilterInput } from '@/graphql/schemaTypes';
 import { activeContestQuery, getContestStockFeedByContestIdQuery } from '@/graphql/queries';
 import { sendMessageAPI } from '@/utils/sendMessageAPI';
 
 const websocketUrl =
-  'wss://streamer.cryptocompare.com/v2?api_key='+import.meta.env.VITE_GRAFBASE_STOCK_API_KEY;
+  'wss://streamer.cryptocompare.com/v2?api_key=' + import.meta.env.VITE_GRAFBASE_STOCK_API_KEY;
 
-const newApolloClient = provideApolloClient(apolloClient);
+
+const contestIdOverall = ref('');
+const feedId = ref('');
+let webSocket: WebSocket;
+let oldStockData: any = "";
+
+provideApolloClient(apolloClient);
 
 const stockData = new Map<string, number>();
 stockData.set('BTC', 0);
@@ -21,7 +27,6 @@ stockData.set('XRP', 0);
 stockData.set('DOGE', 0);
 stockData.set('SOL', 0);
 
-let webSocket: WebSocket;
 
 const onMessage = (event: MessageEvent) => {
   const data: any = JSON.parse(event.data);
@@ -65,15 +70,13 @@ const connectWebSocket = () => {
 
 connectWebSocket();
 
-let oldStockData:any="";
 setInterval(() => {
   if (feedId.value) {
     const stockDataObject = Object.fromEntries(stockData);
-    //console.log("stockDataObject", stockDataObject);
-    if(oldStockData!="" && oldStockData==JSON.stringify(stockDataObject)){
+    if (oldStockData != "" && oldStockData == JSON.stringify(stockDataObject)) {
       return
-    }else{
-      oldStockData=JSON.stringify(stockDataObject)
+    } else {
+      oldStockData = JSON.stringify(stockDataObject)
     }
     updateFeedData(JSON.stringify(stockDataObject), contestIdOverall.value, feedId.value);
   }
@@ -92,7 +95,6 @@ const addStocks = async (stockCode: string, stockDescription: string, stockImage
         link: contestId
       }
     };
-
     const { mutate: createContestStockMutate, onDone: onCreateContestStockResult, onError: onCreateContestStockError } = useMutation(createContestStockMutation, { variables: { input: variables } })
     onCreateContestStockResult((results: any) => {
       console.log("ContestStock joined successfully", results);
@@ -101,12 +103,10 @@ const addStocks = async (stockCode: string, stockDescription: string, stockImage
       console.log("error create error", error);
     });
     createContestStockMutate();
-
   } catch (error) {
     console.log("cannot add stocks", error);
   }
 }
-
 
 const addFeedData = async (stockFeedJson: string, contestId: string) => {
   try {
@@ -116,7 +116,6 @@ const addFeedData = async (stockFeedJson: string, contestId: string) => {
       contest: {
         link: contestId
       }
-
     };
 
     const { mutate: createContestStockFeedMutate, onDone: onCreateContestStockFeedResult, onError: onCreateContestStockFeedError } = useMutation(createContestStockFeedMutation, { variables: { input: variables } })
@@ -127,15 +126,11 @@ const addFeedData = async (stockFeedJson: string, contestId: string) => {
       console.log("error create error", error);
     });
     createContestStockFeedMutate();
-
-
   } catch (error) {
     console.log("cannot create feeds", error);
   }
 }
 
-const contestIdOverall = ref('');
-const feedId = ref('');
 
 const updateFeedData = async (stockFeedJson: string, contestId: string, feedUniqueId: string) => {
   try {
@@ -154,7 +149,7 @@ const updateFeedData = async (stockFeedJson: string, contestId: string, feedUniq
     const { mutate: updateContestStockFeedMutate, onDone: onUpdateContestStockFeedResult, onError: onUpdateContestStockFeedError } = useMutation(updateContestStockFeedMutation, { variables: { input: updatedObject, by: byId } })
     onUpdateContestStockFeedResult((results: any) => {
       const contestStockFeed = results.data.contestStockFeedUpdate.contestStockFeed as ContestStockFeed;
-      sendMessageAPI(contestStockFeed,"grafbase-channel","ticker")
+      sendMessageAPI(contestStockFeed, "grafbase-channel", "ticker")
     });
     onUpdateContestStockFeedError((error: ApolloError) => {
       console.log("error ContestStockFeed error", error);
@@ -165,7 +160,6 @@ const updateFeedData = async (stockFeedJson: string, contestId: string, feedUniq
     console.log("cannot update feed", error);
   }
 }
-
 
 const createNewContest = async (contestName: string, contestDescription: string): Promise<any> => {
   const currentUTCDate = new Date();
@@ -179,29 +173,27 @@ const createNewContest = async (contestName: string, contestDescription: string)
     "maxParticipants": 20,
     "contestDate": updatedUTCDate
   };
-
-  const { mutate: createContestMutate} = useMutation(createContestMutation, { variables: { input: variables } })
+  const { mutate: createContestMutate } = useMutation(createContestMutation, { variables: { input: variables } })
   try {
     const results = await createContestMutate();
-    if(results){
-    const contest = results.data.contestCreate.contest;
+    if (results) {
+      const contest = results.data.contestCreate.contest;
 
-    if (contest) {
-      console.log("new contest", contest);
-      console.log("Contest created successfully");
-      return contest;
+      if (contest) {
+        console.log("new contest", contest);
+        console.log("Contest created successfully");
+        return contest;
+      } else {
+        console.log("Contest creation failed");
+        return null;
+      }
     } else {
-      console.log("Contest creation failed");
-      return null;
+      return null
     }
-  }else{
-    return null
-  }
   } catch (error) {
     console.log("error create error", error);
     return null;
   }
-
 }
 
 const getActiveContest = (): Promise<Contest | null> => {
@@ -211,23 +203,20 @@ const getActiveContest = (): Promise<Contest | null> => {
         in: ["A"]
       }
     };
-  
     const { onResult, onError } = useQuery(activeContestQuery, { filter: variables });
-  
     onResult((results: IApolloResult) => {
       if (results.loading) return;
       const contestResponse = results.data.contestSearch as ContestSearchConnection;
-      console.log("contestResponsecontestResponsecontestResponsecontestResponse",contestResponse)
       if (contestResponse.edges.length === 1) {
         const contestNode = contestResponse.edges[0].node;
-        contestIdOverall.value=contestNode.id
+        contestIdOverall.value = contestNode.id
         resolve(contestNode);
       } else {
         resolve(null); // No active contest found
       }
 
     });
-  
+
     onError((error: ApolloError) => {
       console.log("error", error);
       reject(error);
@@ -236,7 +225,6 @@ const getActiveContest = (): Promise<Contest | null> => {
 };
 
 const getFeed = async (): Promise<void> => {
-
   const variables: ContestStockFeedSearchFilterInput = {
     contestId: {
       eq: contestIdOverall.value
@@ -245,9 +233,6 @@ const getFeed = async (): Promise<void> => {
   const { onResult, onError } = useQuery(getContestStockFeedByContestIdQuery, { filter: variables });
   onResult((results: IApolloResult) => {
     if (results.loading) return
-
-    console.log("resultsresultsresults",results)
-    console.log("contestIdOverall.value",contestIdOverall.value)
     const contestStockFeedResponse = results.data.contestStockFeedSearch as ContestStockFeedSearchConnection;
     if (contestStockFeedResponse.edges.length == 1) {
       const contestStockFeedNode = contestStockFeedResponse.edges[0].node;
@@ -264,28 +249,20 @@ const closePreviousContest = async (contestId: string, contestData: any): Promis
   const currentUTCDate = new Date();
   currentUTCDate.setDate(currentUTCDate.getDate() + 7);
   const updatedUTCDate = currentUTCDate.toISOString();
-
   try {
     contestData.status = 'C';
-
-    //    contestNewDataUpdate='C'
-
     const updatedObject: ContestUpdateInput = {
       "name": contestData.name,
       "description": contestData.description,
       "status": "C",
       "maxParticipants": {
-        set:contestData.maxParticipants
+        set: contestData.maxParticipants
       },
       "contestDate": contestData.contestDate
     };
-
-
-
     const byId: ContestByInput = {
       id: contestData.id
     }
-
     const { mutate: updateContestMutate, onDone: onUpdateContestResult, onError: onUpdateContestError } = useMutation(updateContestMutation, { variables: { input: updatedObject, by: byId } })
     onUpdateContestResult((results: any) => {
       console.log("Contest updated successfully", results);
@@ -294,32 +271,22 @@ const closePreviousContest = async (contestId: string, contestData: any): Promis
       console.log("error Contest error", error);
     });
     await updateContestMutate();
-
-
-/*    const creationDetails: any = await API.graphql(graphqlOperation(
-      updateContest,
-      {
-        input: { ...updatedObject },
-        condition: { status: { eq: 'A' } }
-      }
-    ));
- */  } catch (error) {
+  } catch (error) {
     console.log("cannot contest stock", error);
   }
 }
-//close contest
 
 const startNewContestCreation = async () => {
 
   const stockDataObject = Object.fromEntries(stockData);
   const currentContest = await getActiveContest();
-  console.log("currentContest",currentContest)
+  console.log("currentContest", currentContest)
   if (currentContest) {
     await closePreviousContest(currentContest.id, currentContest);
-    console.log("Delete previous",currentContest.id)
+    console.log("Delete previous", currentContest.id)
   }
   const newContestData = await createNewContest("Crypto wars1", "Learn Crypto1");
-  console.log("new Contest",newContestData)
+  console.log("new Contest", newContestData)
   contestIdOverall.value = newContestData.id;
   addFeedData(JSON.stringify(stockDataObject), newContestData.id);
   addStocks('BTC', 'Bitcoin', 'bitcoin.png', stockData.get('BTC') ?? 0, newContestData.id);
@@ -340,7 +307,6 @@ getActiveContest().then(() => {
 <template>
   <main>
     <RouterLink to="/">Home</RouterLink>
-
     <div class="flex flex-col bg-base-300 min-h-screen">
       <div class="flex-1 flex flex-col sm:flex-row">
         <main class="flex-1">

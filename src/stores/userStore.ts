@@ -9,8 +9,7 @@ import type { ApolloError } from '@apollo/client/errors';
 import type { IApolloResult } from '@/utils/commonInterfaces';
 import { createNewUser } from '@/graphql/mutations';
 import { apolloClient } from '@/utils/apolloLink'
-import {Auth0Client, User, createAuth0Client} from "@auth0/auth0-spa-js";
-import { setContext } from "@apollo/client/link/context";
+import { Auth0Client, User, createAuth0Client } from "@auth0/auth0-spa-js";
 
 export interface UserInfo {
   username: string
@@ -22,7 +21,25 @@ export interface UserInfo {
 
 export const useUserStore = defineStore('userStore', () => {
 
+  const gamePlayStore = useGamePlayStore();
+  const { participantDetails } = storeToRefs(gamePlayStore)
+
   provideApolloClient(apolloClient);
+
+  let auth0: Auth0Client;
+  const auth0Config = {
+    domain: import.meta.env.VITE_AUTH0_DOMAIN,
+    clientId: import.meta.env.VITE_AUTH0_CLIENT_ID,
+    audience: import.meta.env.VITE_AUTH0_AUDIENCE,
+    authorizationParams: {
+      redirect_uri: window.location.origin
+    }
+  };
+
+  createAuth0Client(auth0Config).then((client) => {
+    auth0 = client;
+  });
+
 
   const userInfo = ref<UserInfo>({
     username: '',
@@ -30,47 +47,31 @@ export const useUserStore = defineStore('userStore', () => {
     email: '',
     profileImage: ''
   });
-  const auth0Config = {
-    domain: import.meta.env.VITE_AUTH0_DOMAIN,
-    clientId: import.meta.env.VITE_AUTH0_CLIENT_ID,
-    audience: "https://grafbase-godwinpinto.jp.auth0.com/api/v2/",
-    authorizationParams: {
-      redirect_uri: window.location.origin
-    }
-  };
 
-  let auth0:Auth0Client;
-  createAuth0Client(auth0Config).then((client)=>
-  {
-    auth0=client;
-  });
-  
-  const gamePlayStore = useGamePlayStore();
-  const { participantDetails } = storeToRefs(gamePlayStore)
 
   const setUserDetails = (userInfoVal: UserInfo) => {
     userInfo.value = userInfoVal
   }
 
-  const signInWithGoogle = async() => {
+  const signInWithGoogle = async () => {
     await auth0.loginWithPopup();
-    const token2=await auth0.getIdTokenClaims();
-    const user =await auth0.getUser();
-    localStorage.setItem('auth:token',token2?.__raw??'')
-    localStorage.setItem('auth:user',JSON.stringify(user))
+    const token2 = await auth0.getIdTokenClaims();
+    const user = await auth0.getUser();
+    localStorage.setItem('auth:token', token2?.__raw ?? '')
+    localStorage.setItem('auth:user', JSON.stringify(user))
     console.log(user)
     asyncSetUser();
   }
 
-  async function asyncSetUser() {
+  const asyncSetUser = async () => {
     try {
-      let userDetails:any;
-      try{
-        const user =await auth0.getUser();
+      let userDetails: any;
+      try {
+        const user = await auth0.getUser();
         userDetails = user;
-      }catch(error1){
-        const localUser=localStorage.getItem('auth:user')
-        if(!userDetails && localUser && localUser!=''){
+      } catch (error1) {
+        const localUser = localStorage.getItem('auth:user')
+        if (!userDetails && localUser && localUser != '') {
           userDetails = JSON.parse(localUser) as User;
         }
       }
@@ -93,7 +94,6 @@ export const useUserStore = defineStore('userStore', () => {
               email: userDetails.email,
               profileImage: userDetails.picture
             }
-            console.log("already present")
           } else {
             const email = userDetails.email;
             const username = userDetails.name;
@@ -135,10 +135,10 @@ export const useUserStore = defineStore('userStore', () => {
 
 
 
-  const signOut = async() => {
+  const signOut = async () => {
     try {
-      localStorage.setItem('auth:token','')
-      localStorage.setItem('auth:user','')
+      localStorage.setItem('auth:token', '')
+      localStorage.setItem('auth:user', '')
       participantDetails.value = {
         id: '',
         user: {
@@ -153,7 +153,7 @@ export const useUserStore = defineStore('userStore', () => {
         stockUnits: 0,
         contestId: ''
       }
-      await auth0.logout({logoutParams:{localOnly: true,returnTo:window.location.toString()}})
+      await auth0.logout({ logoutParams: { localOnly: true, returnTo: window.location.toString() } })
 
     } catch (error) {
       console.log("Something went wrong in signout", error);

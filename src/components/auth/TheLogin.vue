@@ -3,15 +3,10 @@ import { useUserStore } from '@/stores/userStore';
 import { storeToRefs } from 'pinia'
 
 const userStore = useUserStore();
-
 const { userInfo } = storeToRefs(userStore)
 const { signInWithGoogle } = useUserStore();
-
-
-
 </script>
 <template>
-
     <div v-if="userInfo.userId == ''">
         <div class="navbar bg-base-300 justify-center items-center">
             <span class="normal-case text-xl font-bold">Login to Enter Game</span>

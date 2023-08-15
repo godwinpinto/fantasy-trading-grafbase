@@ -5,36 +5,36 @@ import ChatWidget from '@/components/game/ChatWidget.vue'
 import ContestStocks from '@/components/game/ContestStocks.vue';
 import TheLogin from '@/components/auth/TheLogin.vue';
 import { useUserStore } from '@/stores/userStore';
-import {  onBeforeMount, ref } from "vue";
+import { onBeforeMount, ref } from "vue";
 
 const isAuthSetTried = ref(false);
 const { asyncSetUser } = useUserStore();
 
 onBeforeMount(() => {
-  asyncSetUser().then(()=>{
+  asyncSetUser().then(() => {
     isAuthSetTried.value = true;
   })
 });
 </script>
 <template>
   <div class="h-screen">
-  <NavBar />
-  <main>
+    <NavBar />
+    <main>
 
-    <div class="flex flex-col bg-base-300" v-if="isAuthSetTried">
-      <div class="flex-1 flex flex-col sm:flex-row">
-        <main class="flex-1">
-          <Leaderboard />
-        </main>
-        <nav class="order-first sm:w-1/3 ">
-          <ContestStocks />
-          <TheLogin />
-        </nav>
-        <aside class="sm:w-1/4">
-          <ChatWidget />
-        </aside>
+      <div class="flex flex-col bg-base-300" v-if="isAuthSetTried">
+        <div class="flex-1 flex flex-col sm:flex-row">
+          <main class="flex-1">
+            <Leaderboard />
+          </main>
+          <nav class="order-first sm:w-1/3 ">
+            <ContestStocks />
+            <TheLogin />
+          </nav>
+          <aside class="sm:w-1/4 border-l-2 border-dotted border-blue-900">
+            <ChatWidget />
+          </aside>
+        </div>
       </div>
-    </div>
-  </main>
-</div>
+    </main>
+  </div>
 </template>

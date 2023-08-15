@@ -12,17 +12,30 @@ import type { IApolloResult } from '@/utils/commonInterfaces';
 import type { ParticipantSearchEdge, ParticipantSearchConnection, ParticipantSearchFilterInput, Participant } from '@/graphql/schemaTypes';
 import { getLeaderboardByContestIdQuery } from '@/graphql/queries';
 
-
 const userStore = useUserStore();
-
-const scrollChat = ref<HTMLElement | null>(null);
 
 const { userInfo } = storeToRefs(userStore)
 
 const gamePlayStore = useGamePlayStore();
 
+const currentLeaderboardList = ref<Array<LeaderboardRow>>([]);
+
+interface LeaderboardRow {
+  id: string,
+  userId: string,
+  profileImage: string,
+  username: string,
+  stockCode: string,
+  balanceAmount: number,
+  stockUnitBuyPrice: number,
+  stockUnits: number,
+  betType: 'S' | 'B' | string,
+}
+
 const { contestId, participantDetails, joinedStatus, CRYPTO_BTC, CRYPTO_DOGE, CRYPTO_SOL, CRYPTO_ETH, CRYPTO_XRP, currentParticipantCount } = storeToRefs(gamePlayStore)
 
+const pusher: any = inject('pusher');
+var channel = pusher.subscribe('grafbase-channel');
 
 watch(userInfo, (newValue, oldValue) => {
   const newArray = currentLeaderboardList.value;
@@ -45,28 +58,8 @@ watch(userInfo, (newValue, oldValue) => {
       }
     }
   }
-
 });
 
-
-interface LeaderboardRow {
-  id: string,
-  userId: string,
-  profileImage: string,
-  username: string,
-  stockCode: string,
-  balanceAmount: number,
-  stockUnitBuyPrice: number,
-  stockUnits: number,
-  betType: 'S' | 'B' | string,
-}
-
-const currentLeaderboardList = ref<Array<LeaderboardRow>>([]);
-
-
-
-const pusher: any = inject('pusher');
-var channel = pusher.subscribe('grafbase-channel');
 channel.bind('leaderboard', function (data: any) {
   const participantDetails1 = data.data as Participant;
   if (data.op === "update") {
@@ -77,8 +70,6 @@ channel.bind('leaderboard', function (data: any) {
   }
 });
 
-
-
 watch(contestId, (newContestId, oldContestId) => {
   if (newContestId !== oldContestId && newContestId != '') {
     getCurrentLeaderboard(newContestId);
@@ -87,8 +78,6 @@ watch(contestId, (newContestId, oldContestId) => {
 
 const getCurrentLeaderboard = async (contestId: string) => {
   try {
-
-
     const variables: ParticipantSearchFilterInput = {
       contestId: {
         eq: contestId
@@ -125,7 +114,6 @@ const getCurrentLeaderboard = async (contestId: string) => {
       console.log("error", error);
       return null
     })
-
   } catch (error) {
     console.log("Error in fetching messages", error);
   }

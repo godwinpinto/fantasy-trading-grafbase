@@ -54,14 +54,11 @@ export const useGamePlayStore = defineStore('gamePlayStore', () => {
     })
     const contestDetails = ref();
 
-
-
-    
     const getActiveContest = async () => {
         const variables: ContestSearchFilterInput = {
             status: {
                 eq: "A"
-            } 
+            }
         };
         const { onResult, onError } = useQuery(activeContestQuery, { filter: variables });
         onResult((results: IApolloResult) => {
@@ -78,8 +75,6 @@ export const useGamePlayStore = defineStore('gamePlayStore', () => {
         })
 
     }
-
-
 
     const joinGame = async (contestId: string, userId: string) => {
         try {
@@ -99,11 +94,10 @@ export const useGamePlayStore = defineStore('gamePlayStore', () => {
                 }
             };
 
-
             const { mutate: createParticipantMutate, onDone: onCreateParticipantResult, onError: onCreateParticipantError } = useMutation(createParticipantMutation, { variables: { input: variables } })
             onCreateParticipantResult((results: any) => {
                 const participant = results.data.participantCreate.participant as Participant;
-                sendMessageAPI({op:"add",data:participant},"grafbase-channel","leaderboard")
+                sendMessageAPI({ op: "add", data: participant }, "grafbase-channel", "leaderboard")
                 if (participant) {
                     participantDetails.value = participant
                 }
@@ -120,8 +114,6 @@ export const useGamePlayStore = defineStore('gamePlayStore', () => {
     }
 
     const investOrWithdraw = async (action: string, stockCode: string, betType: string) => {
-
-
         try {
             let balanceAmount = 0;
             const currVal = participantDetails.value
@@ -135,7 +127,6 @@ export const useGamePlayStore = defineStore('gamePlayStore', () => {
                     alert("Please wait for rates to refresh");
                     return
                 }
-
             } else if (action === 'W') {
                 balanceAmount = currVal.stockUnitBuyPrice * currVal.stockUnits + calculateProfitOrLoss(currVal.betType, currVal.stockUnitBuyPrice, (currVal.stockCode == 'BTC' ?
                     CRYPTO_BTC.value : currVal.stockCode == 'ETH' ?
@@ -150,32 +141,31 @@ export const useGamePlayStore = defineStore('gamePlayStore', () => {
                     alert("Please wait for rates to refresh");
                     return
                 }
-
             }
-
 
             const updatedObject: ParticipantUpdateInput = {
                 balanceAmount: {
-                    set:balanceAmount
+                    set: balanceAmount
                 },
                 stockCode: stockCode,
-                stockUnitBuyPrice: {set:
-                    stockUnitBuyPrice
+                stockUnitBuyPrice: {
+                    set:
+                        stockUnitBuyPrice
                 },
                 stockUnits: {
-                    set:stockUnits
+                    set: stockUnits
                 },
                 betType: betType,
             };
-            
+
             const byId: ParticipantByInput = {
-                id:currVal.id
+                id: currVal.id
             }
 
-            const { mutate: updateParticipantMutate, onDone: onUpdateParticipantResult, onError: onUpdateParticipantError } = useMutation(updateParticipantMutation, { variables: { input: updatedObject,by:byId } })
+            const { mutate: updateParticipantMutate, onDone: onUpdateParticipantResult, onError: onUpdateParticipantError } = useMutation(updateParticipantMutation, { variables: { input: updatedObject, by: byId } })
             onUpdateParticipantResult((results: any) => {
                 const participant = results.data.participantUpdate.participant as Participant;
-                sendMessageAPI({op:"update",data:participant},"grafbase-channel","leaderboard")
+                sendMessageAPI({ op: "update", data: participant }, "grafbase-channel", "leaderboard")
                 if (participant) {
                     participantDetails.value = participant
                 }

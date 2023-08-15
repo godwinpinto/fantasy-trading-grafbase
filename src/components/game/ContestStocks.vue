@@ -8,14 +8,11 @@ import JoinGame from '@/components/game/JoinGame.vue'
 import { useGamePlayStore } from '@/stores/gamePlayStore';
 import { watch, ref, onBeforeMount, inject } from 'vue';
 import { formatAmount } from '@/utils/utility';
-import { provideApolloClient, useMutation, useQuery } from '@vue/apollo-composable'
+import { useQuery } from '@vue/apollo-composable'
 import type { ApolloError } from '@apollo/client/errors';
 import type { IApolloResult } from '@/utils/commonInterfaces';
-import { updateContestMutation, createContestStockMutation, createContestStockFeedMutation, updateContestStockFeedMutation, createContestMutation } from '@/graphql/mutations';
-import { apolloClient } from '@/utils/apolloLink'
-import type { ContestStockFeed,ContestStock, ContestStockSearchEdge, ContestStockSearchConnection, ContestStockSearchFilterInput, IntOperationsInput, ContestByInput, ContestUpdateInput, Contest, ContestStockCreateInput, ContestStockFeedSearchFilterInput, ContestStockFeedSearchConnection, ContestStockFeedUpdateInput, ContestStockFeedByInput, ContestCreateInput, ContestSearchConnection, ContestSearchFilterInput, FloatOperationsInput, Participant, ParticipantCreateInput, ParticipantCreatePayload, ParticipantUpdateInput, UserCreateInput, UserCreatePayload, UserSearchConnection, UserSearchFilterInput } from '@/graphql/schemaTypes';
-import { activeContestQuery, getContestStockFeedByContestIdQuery, getContestStockByContestIdQuery } from '@/graphql/queries';
-
+import type { ContestStockFeed, ContestStock, ContestStockSearchEdge, ContestStockSearchConnection, ContestStockSearchFilterInput, ContestStockFeedSearchFilterInput, ContestStockFeedSearchConnection } from '@/graphql/schemaTypes';
+import { getContestStockFeedByContestIdQuery, getContestStockByContestIdQuery } from '@/graphql/queries';
 
 const userStore = useUserStore();
 const selectedStock = ref('BTC');
@@ -36,6 +33,9 @@ interface StocksRow {
 
 const currentStocksList = ref<Array<StocksRow>>([]);
 
+const pusher: any = inject('pusher');
+var channel = pusher.subscribe('grafbase-channel');
+
 watch(contestId, (newContestId, oldContestId) => {
   if (newContestId !== oldContestId && newContestId != '') {
     getCurrentStocks(newContestId);
@@ -43,25 +43,18 @@ watch(contestId, (newContestId, oldContestId) => {
   }
 });
 
-
-
-const pusher: any = inject('pusher');
-var channel = pusher.subscribe('grafbase-channel');
 channel.bind('ticker', function (data: any) {
-     const stockFeed = data as ContestStockFeed;
-
-          const stockDataObject: any = JSON.parse(stockFeed.stockFeed);
-          CRYPTO_BTC.value = stockDataObject.BTC;
-          CRYPTO_DOGE.value = stockDataObject.DOGE;
-          CRYPTO_SOL.value = stockDataObject.SOL;
-          CRYPTO_ETH.value = stockDataObject.ETH;
-          CRYPTO_XRP.value = stockDataObject.XRP;
-
+  const stockFeed = data as ContestStockFeed;
+  const stockDataObject: any = JSON.parse(stockFeed.stockFeed);
+  CRYPTO_BTC.value = stockDataObject.BTC;
+  CRYPTO_DOGE.value = stockDataObject.DOGE;
+  CRYPTO_SOL.value = stockDataObject.SOL;
+  CRYPTO_ETH.value = stockDataObject.ETH;
+  CRYPTO_XRP.value = stockDataObject.XRP;
 });
 
 const getCurrentStocks = async (contestId: string) => {
   try {
-
     const variables: ContestStockSearchFilterInput = {
       contestId: {
         eq: contestId
@@ -71,11 +64,8 @@ const getCurrentStocks = async (contestId: string) => {
     onResult((results: IApolloResult) => {
       if (results.loading) return
       const contestStockResponse = results.data.contestStockSearch as ContestStockSearchConnection;
-
       if (contestStockResponse.edges.length > 0) {
-
         const stockList: StocksRow[] = contestStockResponse.edges.map((edge: ContestStockSearchEdge) => {
-
           const stock = edge.node as ContestStock
           return ({
             stockId: stock.id,
@@ -93,16 +83,13 @@ const getCurrentStocks = async (contestId: string) => {
       console.log("error", error);
       return null
     })
-
   } catch (error) {
     console.log("Error in fetching stocks list", error);
   }
 }
 
-
 const getCurrentFeed = async (contestId: string) => {
   try {
-
     const variables: ContestStockFeedSearchFilterInput = {
       contestId: {
         eq: contestId
@@ -126,8 +113,6 @@ const getCurrentFeed = async (contestId: string) => {
       console.log("error", error);
       return null
     })
-
-
   } catch (error) {
     console.log("Error in fetching stocks feed", error);
   }
@@ -139,7 +124,6 @@ onBeforeMount(() => {
     getCurrentFeed(contestId.value);
   }
 });
-
 </script>
 <template>
   <div class="navbar bg-base-300">

@@ -1,3 +1,5 @@
+/* Auto Generated at https://the-guild.dev/graphql/codegen by pasting the schema definition on the site taken from path finder schema definition tab*/
+
 import gql from 'graphql-tag';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;

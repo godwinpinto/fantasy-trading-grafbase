@@ -9,6 +9,7 @@ export default defineConfig({
     vue(),
   ],
   server: {
+    /* Proxy config to send requests to backend for pusher in localhost development */
     proxy: {
       "/api": {
         target: "https://fantasy-trading-grafbase-godwinpinto.vercel.app",
@@ -25,7 +26,6 @@ export default defineConfig({
             console.log('Received Response from the Target:', proxyRes.statusCode, req.url);
           });
         },
-//          rewrite: (path) => path.replace(/^\/api/, ""),
       },
     },
   },

@@ -11,3 +11,4 @@ A fantasy trading application build completely using Vue and Grapbase. This is a
 
 
 ## More information
+https://godwinpinto.hashnode.dev/learn-and-fun-with-cpl-crypto-premier-league-built-with-grafbase

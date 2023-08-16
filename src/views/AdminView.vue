@@ -78,6 +78,7 @@ setInterval(() => {
     } else {
       oldStockData = JSON.stringify(stockDataObject)
     }
+    console.log("publishing Feed",JSON.stringify(stockDataObject))
     updateFeedData(JSON.stringify(stockDataObject), contestIdOverall.value, feedId.value);
   }
 

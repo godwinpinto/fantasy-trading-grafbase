@@ -65,8 +65,9 @@ channel.bind('leaderboard', function (data: any) {
   if (data.op === "update") {
     getCurrentLeaderboard(contestId.value);
   } else if (data.op === "add") {
-    console.log("received add")
-    getCurrentLeaderboard(contestId.value);
+    setTimeout(function () {
+      getCurrentLeaderboard(contestId.value);
+    }, 2000);
   }
 });
 

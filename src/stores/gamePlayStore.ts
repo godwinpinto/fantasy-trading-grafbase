@@ -169,7 +169,6 @@ export const useGamePlayStore = defineStore('gamePlayStore', () => {
                 if (participant) {
                     participantDetails.value = participant
                 }
-                console.log("participant details updated", results);
             });
             onUpdateParticipantError((error: ApolloError) => {
                 console.log("error Update error", error);
